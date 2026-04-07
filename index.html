@@ -196,7 +196,7 @@ async function loadImages() {
         const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=es-ES`);
         const data = await res.json();
         images = data.results.slice(0, 5).map(m => IMG + m.backdrop_path).filter(u => u);
-      
+     
         if (images.length > 0) {
             document.getElementById("bg1").style.backgroundImage = `url(${images[0]})`;
             startRotation();
@@ -250,52 +250,16 @@ const togglePass = document.getElementById("togglePass");
 const resetBtn = document.getElementById("reset-pass");
 let isLogin = true;
 
-// ==================== LocalStorage (guardado automático) ====================
+// ==================== LocalStorage ====================
 function saveCredentials(email, password) {
     localStorage.setItem("email", email);
     localStorage.setItem("password", password);
 }
-
 function clearCredentials() {
     localStorage.removeItem("email");
     localStorage.removeItem("password");
     emailInput.value = "";
     passwordInput.value = "";
-}
-
-// ==================== AUTO-LOGIN AUTOMÁTICO ====================
-async function attemptAutoLogin() {
-    const savedEmail = localStorage.getItem("email");
-    const savedPassword = localStorage.getItem("password");
-
-    if (!savedEmail || !savedPassword) return false;
-
-    // Mostramos estado de carga
-    title.textContent = "Iniciando sesión automáticamente...";
-    form.style.display = "none";           // Ocultamos el formulario
-    errorBox.textContent = "";
-
-    try {
-        await signInWithEmailAndPassword(auth, savedEmail, savedPassword);
-
-        let redirectUrl = "https://www.lzplayhd.xyz";
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnTo = urlParams.get("returnTo");
-        if (returnTo) redirectUrl = decodeURIComponent(returnTo);
-
-        const separator = redirectUrl.includes("?") ? "&" : "?";
-        redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(savedEmail)}&pass=${encodeURIComponent(savedPassword)}`;
-
-        window.location.href = redirectUrl;
-        return true;
-    } catch (err) {
-        console.error("Auto-login falló:", err);
-        clearCredentials();
-        form.style.display = "block";
-        title.textContent = "Iniciar sesión";
-        errorBox.textContent = "La sesión expiró o los datos no son válidos. Por favor inicia sesión nuevamente.";
-        return false;
-    }
 }
 
 // ==================== Toggle Password ====================
@@ -334,7 +298,7 @@ toggle.addEventListener("click", () => {
     toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
 });
 
-// ==================== Form Submit ====================
+// ==================== Form Submit (GUARDA CREDENCIALES AUTOMÁTICAMENTE) ====================
 form.addEventListener("submit", async e => {
     e.preventDefault();
     errorBox.textContent = "";
@@ -362,7 +326,7 @@ form.addEventListener("submit", async e => {
 
         const separator = redirectUrl.includes("?") ? "&" : "?";
         redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
-        
+       
         window.location.href = redirectUrl;
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
@@ -393,9 +357,9 @@ form.addEventListener("submit", async e => {
 });
 
 // ==================== Inicialización ====================
-window.onload = async () => {
+window.onload = () => {
     loadImages();
-    await attemptAutoLogin();   // ← Auto-login automático
+    // ← Auto-login eliminado
 };
 </script>
 </body>
