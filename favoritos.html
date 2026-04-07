@@ -15,8 +15,6 @@
       background: #141414;
     }
     
-    :root { --preloader-time: 3s; }
-    
     #preloader {
       position: fixed; inset: 0; background: #141414;
       display: flex; align-items: center; justify-content: center;
@@ -152,7 +150,6 @@
       const params = new URLSearchParams(window.location.search);
       let email = params.get("email");
       let password = params.get("pass");
-
       if (!email || !password) {
         email = localStorage.getItem("email");
         password = localStorage.getItem("password");
@@ -172,7 +169,7 @@
       }
     }
 
-    // ==================== ELIMINAR ====================
+    // ==================== ELIMINAR FAVORITOS ====================
     async function deleteFavorite(docId) {
       if (!currentUserUid || !confirm("¿Eliminar este favorito?")) return;
       try {
@@ -211,27 +208,24 @@
     }
 
     function logout() {
-      if (confirm("¿Cerrar sesión?")) {
+      if (confirm("¿Cerrar sesión y borrar credenciales guardadas?")) {
         clearCredentials();
         window.location.href = "https://lzrdrz10.github.io/log/";
       }
     }
 
-    // ==================== CARGAR FAVORITOS ====================
+    // ==================== CARGAR Y RENDERIZAR ====================
     async function loadFavoritos() {
       const preloader = document.getElementById("preloader");
-      
       try {
         await tryAutoLogin();
         const user = auth.currentUser;
-
         if (!user) {
           const loginUrl = "https://lzrdrz10.github.io/log/";
           const returnTo = encodeURIComponent(window.location.href);
           window.location.href = `${loginUrl}?returnTo=${returnTo}`;
           return;
         }
-
         currentUserUid = user.uid;
 
         const q = query(collection(db, `users/${user.uid}/favorites`), orderBy("savedAt", "desc"));
@@ -244,7 +238,7 @@
             titulo: data.title || "Sin título",
             url: data.url,
             año: data.year || "—",
-            poster: data.poster || "https://picsum.photos/id/1015/300/450"   // Imagen más confiable
+            poster: data.poster || "https://picsum.photos/id/1015/300/450"
           };
         });
 
@@ -254,15 +248,13 @@
           renderPage(1);
         }
       } catch (e) {
-        console.error("Error cargando favoritos:", e);
+        console.error(e);
         document.getElementById("content-section").innerHTML = `
           <div class="col-span-full text-center py-20">
             <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
             <p class="text-xl">No se pudieron cargar tus favoritos</p>
-            <p class="text-white/60 mt-2">Intenta recargar la página o inicia sesión nuevamente.</p>
           </div>`;
       } finally {
-        // Siempre ocultamos el preloader
         preloader.classList.add("hide");
       }
     }
@@ -330,10 +322,17 @@
       if (currentPage < total) renderPage(currentPage + 1);
     }
 
+    // ==================== EXPONER FUNCIONES GLOBALMENTE ====================
+    window.deleteFavorite = deleteFavorite;
+    window.deleteAllFavorites = deleteAllFavorites;
+    window.logout = logout;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
     // ==================== INICIO ====================
     window.addEventListener("load", loadFavoritos);
 
-    // Seguridad: ocultar preloader después de 8 segundos máximo
+    // Seguridad preloader
     setTimeout(() => {
       const preloader = document.getElementById("preloader");
       if (preloader) preloader.classList.add("hide");
