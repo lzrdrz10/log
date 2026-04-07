@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LzPlayLog</title>
+
+<link rel="shortcut icon" href="img/favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap");
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+font-family:'Roboto',sans-serif;
+background:#000;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow:hidden;
+}
+
+.bg{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center;
+z-index:0;
+transition:opacity 1.5s ease;
+}
+
+.overlay{
+position:absolute;
+inset:0;
+background:rgba(0,0,0,.65);
+z-index:1;
+}
+
+.logo{
+position:absolute;
+top:5px;
+left:5px;
+width:180px;
+z-index:3;
+}
+
+.form-wrapper{
+position:relative;
+z-index:2;
+background:rgba(0, 0, 0, .0%);
+backdrop-filter:blur(12px);
+padding:60px 68px 40px;
+border-radius:8px;
+width:100%;
+max-width:420px;
+animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+h2{
+color:#fff;
+text-align:center;
+margin-bottom:28px;
+font-size:28px;
+}
+
+.form-control{
+position:relative;
+margin-bottom:20px;
+}
+
+.form-control input{
+width:100%;
+height:56px;
+background:#333;
+border:none;
+border-radius:4px;
+color:#fff;
+padding:0 50px 0 50px;
+font-size:16px;
+}
+
+.form-control input:focus{
+background:#444;
+outline:none;
+}
+
+.form-control i.left-icon{
+position:absolute;
+left:18px;
+top:50%;
+transform:translateY(-50%);
+color:#aaa;
+z-index:2;
+}
+
+.form-control label{
+position:absolute;
+left:50px;
+top:50%;
+transform:translateY(-50%);
+color:#aaa;
+transition:.2s;
+pointer-events:none;
+font-size:16px;
+}
+
+.form-control input:focus ~ label,
+.form-control input:not(:placeholder-shown) ~ label{
+top:12px;
+font-size:12px;
+color:#ccc;
+}
+
+.toggle-pass{
+position:absolute;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+color:#aaa;
+cursor:pointer;
+font-size:18px;
+z-index:3;
+transition:.2s;
+}
+
+.toggle-pass:hover{
+color:#fff;
+transform:translateY(-50%) scale(1.1);
+}
+
+button{
+width:100%;
+padding:16px;
+margin-top:20px;
+background:#e50914;
+border:none;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+border-radius:4px;
+font-size:16px;
+}
+
+button:hover{background:#f6121d}
+button:disabled{opacity:.7;cursor:not-allowed}
+
+.error{
+color:#e50914;
+margin-bottom:15px;
+text-align:center;
+font-size:14px;
+min-height:20px;
+}
+
+.toggle-link{
+color:#fff;
+text-align:center;
+display:block;
+margin-top:20px;
+cursor:pointer;
+text-decoration:underline;
+}
+
+.toggle-link:hover{color:#b3b3b3}
+
+#reset-pass{
+display:none;
+margin-bottom:10px;
+background:#333;
+}
+
+@media (max-width:600px){
+.form-wrapper{padding:40px 40px 45px}
+.overlay{background:rgba(0,0,0,.55)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg1"></div>
+<div class="bg" id="bg2" style="opacity:0;"></div>
+<div class="overlay"></div>
+
+<img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png">
+
+<div class="form-wrapper">
+<h2 id="form-title">Iniciar sesión</h2>
+
+<div id="error-msg" class="error"></div>
+<button id="reset-pass">Restablecer contraseña</button>
+
+<form id="auth-form">
+
+<div class="form-control">
+<i class="fas fa-envelope left-icon"></i>
+<input type="email" id="email" required placeholder=" ">
+<label>Correo electrónico</label>
+</div>
+
+<div class="form-control">
+<i class="fas fa-lock left-icon"></i>
+<input type="password" id="password" required placeholder=" ">
+<label>Contraseña</label>
+<i class="fas fa-eye toggle-pass" id="togglePass"></i>
+</div>
+
+<button id="submit-btn">Iniciar sesión</button>
+
+<div style="margin-top:12px;color:#aaa;font-size:14px;">
+<input type="checkbox" id="remember"> Recuérdame
+</div>
+
+</form>
+
+<a id="toggle-link" class="toggle-link">¿Nuevo en LzPlay? Regístrate</a>
+</div>
+
+<script type="module">
+// ==================== TMDB Background ====================
+const TMDB_API_KEY = "38e497c6c1a043d1341416e80915669f";
+const IMG = "https://image.tmdb.org/t/p/original";
+let images = [], index = 0, active = 1;
+
+async function loadImages() {
+    try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=es-ES`);
+        const data = await res.json();
+        images = data.results.slice(0, 5).map(m => IMG + m.backdrop_path).filter(u => u);
+        
+        if (images.length > 0) {
+            document.getElementById("bg1").style.backgroundImage = `url(${images[0]})`;
+            startRotation();
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function startRotation() {
+    setInterval(() => {
+        index = (index + 1) % images.length;
+        const bg1 = document.getElementById("bg1");
+        const bg2 = document.getElementById("bg2");
+        const next = images[index];
+
+        if (active === 1) {
+            bg2.style.backgroundImage = `url(${next})`;
+            bg2.style.opacity = 1;
+            bg1.style.opacity = 0;
+            active = 2;
+        } else {
+            bg1.style.backgroundImage = `url(${next})`;
+            bg1.style.opacity = 1;
+            bg2.style.opacity = 0;
+            active = 1;
+        }
+    }, 5000);
+}
+
+// ==================== FIREBASE ====================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDA6mRLGymepNx3EXoCOH7CUiBXd6syGeg",
+    authDomain: "sign-in-method-b7675.firebaseapp.com",
+    projectId: "sign-in-method-b7675",
+    appId: "1:713340652755:web:57fc07b795dc503391d826"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// ==================== UI Elements ====================
+const form = document.getElementById("auth-form");
+const title = document.getElementById("form-title");
+const toggle = document.getElementById("toggle-link");
+const btn = document.getElementById("submit-btn");
+const errorBox = document.getElementById("error-msg");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const remember = document.getElementById("remember");
+const togglePass = document.getElementById("togglePass");
+const resetBtn = document.getElementById("reset-pass");
+
+let isLogin = true;
+
+// ==================== Guardar / Cargar credenciales ====================
+function loadSavedCredentials() {
+    const savedEmail = localStorage.getItem("email");
+    const savedPassword = localStorage.getItem("password");
+
+    if (savedEmail) {
+        emailInput.value = savedEmail;
+        remember.checked = true;
+    }
+    if (savedPassword) {
+        passwordInput.value = savedPassword;
+    }
+}
+
+function saveCredentials(email, password) {
+    localStorage.setItem("email", email);
+    localStorage.setItem("password", password);
+}
+
+function clearCredentials() {
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    emailInput.value = "";
+    passwordInput.value = "";
+    remember.checked = false;
+}
+
+// ==================== Mostrar/Ocultar botón Cerrar Sesión ====================
+function updateUIForLoggedState() {
+    const savedEmail = localStorage.getItem("email");
+    const savedPassword = localStorage.getItem("password");
+
+    if (savedEmail && savedPassword) {
+        // Ya hay sesión guardada
+        title.textContent = "Bienvenido de nuevo";
+        btn.textContent = "Iniciar sesión";
+        toggle.style.display = "none"; // Ocultar "Regístrate"
+
+        // Crear botón de Cerrar Sesión
+        let logoutBtn = document.getElementById("logout-btn");
+        if (!logoutBtn) {
+            logoutBtn = document.createElement("button");
+            logoutBtn.id = "logout-btn";
+            logoutBtn.textContent = "Cerrar sesión";
+            logoutBtn.style.background = "#666";
+            logoutBtn.style.marginTop = "15px";
+            logoutBtn.addEventListener("click", () => {
+                clearCredentials();
+                location.reload(); // Recargar para volver al estado inicial
+            });
+            form.parentNode.appendChild(logoutBtn);
+        }
+    } else {
+        // Estado normal (sin sesión guardada)
+        title.textContent = "Iniciar sesión";
+        btn.textContent = "Iniciar sesión";
+        toggle.style.display = "block";
+    }
+}
+
+// ==================== Toggle Password ====================
+togglePass.addEventListener("click", () => {
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePass.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        togglePass.classList.replace("fa-eye-slash", "fa-eye");
+    }
+});
+
+// ==================== Reset Password ====================
+resetBtn.addEventListener("click", async () => {
+    const email = emailInput.value.trim();
+    if (!email) {
+        errorBox.textContent = "Ingresa tu correo para restablecer la contraseña";
+        return;
+    }
+    try {
+        await sendPasswordResetEmail(auth, email);
+        errorBox.style.color = "#4CAF50";
+        errorBox.textContent = "Se envió un enlace de recuperación a tu correo. Revisa también el Spam.";
+        resetBtn.style.display = "none";
+    } catch (err) {
+        errorBox.textContent = "Error al enviar el correo";
+    }
+});
+
+// ==================== Toggle Login / Register ====================
+toggle.addEventListener("click", () => {
+    isLogin = !isLogin;
+    title.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
+    btn.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
+    toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
+});
+
+// ==================== Form Submit ====================
+form.addEventListener("submit", async e => {
+    e.preventDefault();
+    errorBox.textContent = "";
+    resetBtn.style.display = "none";
+    btn.textContent = "Cargando...";
+    btn.disabled = true;
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    try {
+        if (remember.checked) {
+            saveCredentials(email, password);
+        } else {
+            clearCredentials();
+        }
+
+        if (isLogin) {
+            await signInWithEmailAndPassword(auth, email, password);
+            window.location.href = "https://www.lzplayhd.xyz";
+        } else {
+            await createUserWithEmailAndPassword(auth, email, password);
+            // Después de registrar, guardamos y cambiamos a login
+            saveCredentials(email, password);
+            isLogin = true;
+            updateUIForLoggedState();
+            errorBox.style.color = "#4CAF50";
+            errorBox.textContent = "¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.";
+        }
+    } catch (err) {
+        let message = "Error inesperado, intenta nuevamente";
+        switch (err.code) {
+            case "auth/invalid-credential":
+            case "auth/wrong-password":
+                message = "Contraseña incorrecta";
+                resetBtn.style.display = "block";
+                break;
+            case "auth/user-not-found":
+                message = "Este correo no está registrado";
+                break;
+            case "auth/email-already-in-use":
+                message = "Este correo ya tiene una cuenta";
+                break;
+            case "auth/weak-password":
+                message = "La contraseña debe tener al menos 6 caracteres";
+                break;
+            case "auth/invalid-email":
+                message = "Correo inválido";
+                break;
+        }
+        errorBox.textContent = message;
+    }
+
+    btn.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
+    btn.disabled = false;
+});
+
+// ==================== Inicialización ====================
+window.onload = () => {
+    loadSavedCredentials();
+    loadImages();
+    updateUIForLoggedState();
+};
+</script>
+
+</body>
+</html>
