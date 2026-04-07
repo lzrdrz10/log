@@ -3,115 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mis Favoritos - LzPlay</title>
+  <title>Mis Favoritos</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Netflix+Sans:wght@400;500;700&display=swap');
-    
-    body { 
-      font-family: 'Netflix Sans', 'Poppins', sans-serif;
-      background: #141414;
-    }
-    
+    body { font-family: "Poppins", sans-serif; }
+    :root { --preloader-time: 3s; }
     #preloader {
       position: fixed; inset: 0; background: #141414;
       display: flex; align-items: center; justify-content: center;
       z-index: 99999; transition: opacity 0.8s ease;
     }
     #preloader.hide { opacity: 0; pointer-events: none; }
-    
-    .header {
-      background: rgba(20, 20, 20, 0.95);
-      backdrop-filter: blur(12px);
-    }
-    
-    .netflix-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-    }
-    
-    .netflix-card:hover {
-      transform: scale(1.08);
-      box-shadow: 0 20px 25px -5px rgb(229 9 20);
-    }
-    
-    .delete-btn {
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-    
-    .netflix-card:hover .delete-btn {
-      opacity: 1;
-    }
-    
-    .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); }
+    .preloader-content { text-align: center; color: #65615F; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .preloader-content img { width: 220px; max-width: 80vw; filter: drop-shadow(0px -2px 9px #303030); }
+    .prog-bar-wrapper { width: 205px; height: 6px; position: relative; border-radius: 50px; overflow: hidden; }
+    .prog-bar-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #919191; border-radius: 50px; }
+    .prog-bar { position: absolute; top: 0; left: 0; width: 0; height: 100%; background: linear-gradient(to right,#e300ff,#007cf0); border-radius: 50px; animation: loadbar var(--preloader-time) forwards; }
+    @keyframes loadbar { to { width: 100%; } }
+    .preloader-extra { display: grid; grid-template-columns: auto 1fr; align-items: center; font-size: 12px; gap: 8px; }
+    .spinner div { width: 20px; height: 20px; border: 4px solid #65615F; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
-<body class="bg-[#141414] text-white min-h-screen">
-
+<body class="bg-[#04143B] text-white min-h-screen">
   <!-- PRELOADER -->
   <div id="preloader">
-    <div class="preloader-content flex flex-col items-center">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png" alt="Logo" class="w-56 mb-6" />
-      <div class="w-52 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
-        <div class="prog-bar w-0 h-full bg-gradient-to-r from-red-600 to-[#E50914] rounded-full animate-[loadbar_3s_forwards]"></div>
+    <div class="preloader-content">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png" alt="Logo Preloader" />
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-bg"></div>
+        <div class="prog-bar"></div>
       </div>
-      <p class="text-sm text-zinc-400 mt-4 tracking-widest">CARGANDO TUS FAVORITOS...</p>
+      <div class="preloader-extra">
+        <div class="spinner"><div></div></div>
+        <p>Espere, cargando tus favoritos...</p>
+      </div>
     </div>
   </div>
 
-  <!-- HEADER -->
-  <header class="header fixed top-0 left-0 w-full z-50 py-4 border-b border-white/10">
-    <div class="max-w-screen-2xl mx-auto px-8 flex items-center justify-between">
-      <div class="flex items-center gap-6">
-        <a href="https://playerfreelz.blogspot.com" class="flex items-center gap-2 text-white hover:text-[#E50914] transition-colors">
-          <i class="fas fa-arrow-left text-xl"></i>
-          <span class="text-lg font-medium">Volver</span>
-        </a>
-        <div class="flex items-center gap-3">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png" alt="LzPlay" class="h-8" />
-          <h1 class="text-3xl font-bold tracking-tighter text-white">Mis Favoritos</h1>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-4">
-        <button onclick="deleteAllFavorites()" 
-                class="glass flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-red-600 hover:text-white transition-all">
-          <i class="fas fa-trash-alt"></i>
-          <span>Eliminar todos</span>
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full z-50 bg-[#04143B] flex flex-col md:flex-row items-center justify-between px-4 py-3 max-w-[1280px] mx-auto">
+    <div class="flex items-center space-x-4 w-full md:w-auto justify-between">
+      <div class="flex flex-row items-center space-x-3 mb-6">
+        <button onclick="history.back()" class="bg-[#0D1B4C] rounded-full px-4 py-1.5 text-sm font-semibold text-[#4A7FFF] flex items-center space-x-1">
+          <i class="fas fa-arrow-left"></i><span>Atrás</span>
         </button>
-
-        <div onclick="logout()" class="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 cursor-pointer transition-all">
-          <i class="fas fa-sign-out-alt text-lg"></i>
-        </div>
+        <h1 class="text-2xl font-extrabold text-[#4A7FFF] select-none">Mis Favoritos</h1>
       </div>
     </div>
+
+    <!-- BOTÓN ELIMINAR TODOS (nuevo) -->
+    <button onclick="deleteAllFavorites()" 
+            class="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+      <i class="fas fa-trash-alt"></i>
+      <span>Eliminar todos</span>
+    </button>
   </header>
 
-  <!-- MAIN -->
-  <main class="max-w-screen-2xl mx-auto px-8 pt-24 pb-12">
-    <section id="content-section" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-6">
-      <!-- Tarjetas generadas por JS -->
+  <!-- Main -->
+  <main class="max-w-[1280px] mx-auto px-4 mt-24">
+    <section id="content-section" class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <!-- Contenido cargado dinámicamente -->
     </section>
-
-    <div id="pagination" class="flex justify-center items-center gap-6 mt-12 hidden">
-      <button id="prevPage" onclick="prevPage()" 
-              class="px-8 py-3 glass rounded-full flex items-center gap-2 disabled:opacity-30 transition-all">
-        <i class="fas fa-chevron-left"></i> Anterior
-      </button>
-      <span id="pageInfo" class="text-white/70 font-medium px-6 py-2"></span>
-      <button id="nextPage" onclick="nextPage()" 
-              class="px-8 py-3 glass rounded-full flex items-center gap-2 disabled:opacity-30 transition-all">
-        Siguiente <i class="fas fa-chevron-right"></i>
-      </button>
+    <div class="flex justify-center items-center gap-4 mt-6 mb-10">
+      <button id="prevPage" class="bg-[#0D1B4C] text-white px-4 py-2 rounded hover:bg-[#1A2A6C] disabled:opacity-50" disabled>Atrás</button>
+      <button id="nextPage" class="bg-[#0D1B4C] text-white px-4 py-2 rounded hover:bg-[#1A2A6C]" disabled>Siguiente</button>
     </div>
   </main>
 
   <script type="module">
+    // ==================== PRELOADER ====================
+    document.addEventListener("DOMContentLoaded", () => {
+      const preloader = document.getElementById("preloader");
+      const duration = getComputedStyle(document.documentElement).getPropertyValue("--preloader-time").trim();
+      const ms = parseFloat(duration) * (duration.includes("ms") ? 1 : 1000);
+      setTimeout(() => preloader.classList.add("hide"), ms);
+    });
+
+    // ==================== FIREBASE ====================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
     import { getFirestore, collection, query, orderBy, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
@@ -130,12 +101,12 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const ITEMS_PER_PAGE = 18;
+    const ITEMS_PER_PAGE = 15;
     let favoritos = [];
     let currentPage = 1;
     let currentUserUid = null;
 
-    // ==================== CREDENCIALES ====================
+    // ==================== LOCALSTORAGE ====================
     function saveCredentials(email, password) {
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
@@ -155,7 +126,6 @@
         password = localStorage.getItem("password");
       }
       if (!email || !password) return false;
-
       try {
         await signInWithEmailAndPassword(auth, email, password);
         saveCredentials(email, password);
@@ -169,22 +139,22 @@
       }
     }
 
-    // ==================== ELIMINAR FAVORITOS ====================
+    // ==================== ELIMINAR FAVORITO (UNO POR UNO) ====================
     async function deleteFavorite(docId) {
       if (!currentUserUid || !confirm("¿Eliminar este favorito?")) return;
       try {
         await deleteDoc(doc(db, `users/${currentUserUid}/favorites`, docId));
         favoritos = favoritos.filter(f => f.id !== docId);
         renderPage(currentPage);
-        showToast("Favorito eliminado");
       } catch (e) {
-        showToast("Error al eliminar", "#E50914");
+        alert("Error al eliminar el favorito");
       }
     }
 
+    // ==================== ELIMINAR TODOS ====================
     async function deleteAllFavorites() {
       if (!currentUserUid || favoritos.length === 0) return;
-      if (!confirm(`¿Eliminar los ${favoritos.length} favoritos?`)) return;
+      if (!confirm(`¿Eliminar los ${favoritos.length} favoritos? Esta acción no se puede deshacer.`)) return;
 
       try {
         for (const fav of favoritos) {
@@ -192,151 +162,116 @@
         }
         favoritos = [];
         renderEmptyState();
-        showToast("Todos los favoritos eliminados");
       } catch (e) {
-        showToast("Error al eliminar todos", "#E50914");
+        alert("Error al eliminar todos los favoritos");
       }
     }
 
-    // ==================== TOAST ====================
-    function showToast(message, color = "#E50914") {
-      const toast = document.createElement("div");
-      toast.style.cssText = `position:fixed; bottom:30px; right:30px; background:${color}; color:white; padding:14px 24px; border-radius:9999px; box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.3); z-index:99999; font-weight:600; display:flex; align-items:center; gap:8px;`;
-      toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-
-    function logout() {
-      if (confirm("¿Cerrar sesión y borrar credenciales guardadas?")) {
-        clearCredentials();
-        window.location.href = "https://lzrdrz10.github.io/log/";
-      }
-    }
-
-    // ==================== CARGAR Y RENDERIZAR ====================
+    // ==================== CARGAR FAVORITOS ====================
     async function loadFavoritos() {
-      const preloader = document.getElementById("preloader");
-      try {
-        await tryAutoLogin();
-        const user = auth.currentUser;
-        if (!user) {
-          const loginUrl = "https://lzrdrz10.github.io/log/";
-          const returnTo = encodeURIComponent(window.location.href);
-          window.location.href = `${loginUrl}?returnTo=${returnTo}`;
-          return;
-        }
-        currentUserUid = user.uid;
+      await tryAutoLogin();
+      const user = auth.currentUser;
+      if (!user) {
+        const loginUrl = "https://lzrdrz10.github.io/log/";
+        const returnTo = encodeURIComponent(window.location.href);
+        window.location.href = `${loginUrl}?returnTo=${returnTo}`;
+        return;
+      }
+      currentUserUid = user.uid;
 
+      try {
         const q = query(collection(db, `users/${user.uid}/favorites`), orderBy("savedAt", "desc"));
         const snapshot = await getDocs(q);
-
         favoritos = snapshot.docs.map(doc => {
           const data = doc.data();
           return {
             id: doc.id,
+            tipo: "Favorito",
             titulo: data.title || "Sin título",
             url: data.url,
             año: data.year || "—",
-            poster: data.poster || "https://picsum.photos/id/1015/300/450"
+            poster: data.poster || "https://via.placeholder.com/300x450?text=No+Image"
           };
         });
-
         if (favoritos.length === 0) {
           renderEmptyState();
         } else {
-          renderPage(1);
+          renderPage(currentPage);
         }
       } catch (e) {
-        console.error(e);
+        console.error("Error al cargar favoritos:", e);
         document.getElementById("content-section").innerHTML = `
-          <div class="col-span-full text-center py-20">
-            <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
-            <p class="text-xl">No se pudieron cargar tus favoritos</p>
+          <div class="col-span-full text-center text-red-400 py-12">
+            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+            <p>Error al cargar tus favoritos. Intenta más tarde.</p>
           </div>`;
-      } finally {
-        preloader.classList.add("hide");
       }
     }
 
     function renderEmptyState() {
       const contenedor = document.getElementById("content-section");
       contenedor.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
-          <i class="fas fa-heart text-8xl text-white/10 mb-6"></i>
-          <h2 class="text-4xl font-bold mb-3">Aún no tienes favoritos</h2>
-          <p class="text-white/60 max-w-md mb-8">Guarda tus películas y series favoritas presionando el ❤️ en el reproductor.</p>
-          <a href="https://www.lzplayhd.xyz" class="bg-[#E50914] hover:bg-red-700 px-10 py-4 rounded-full text-lg font-semibold inline-flex items-center gap-3 transition-all">
-            <i class="fas fa-play"></i> Explorar contenido
+        <div class="col-span-full text-center py-16">
+          <i class="fas fa-heart text-7xl text-gray-500 mb-6"></i>
+          <h2 class="text-2xl font-semibold mb-2">Aún no tienes favoritos</h2>
+          <p class="text-white/70 max-w-md mx-auto">Ve a cualquier película o serie y presiona el botón ❤️ para guardarla aquí.</p>
+          <a href="https://www.lzplayhd.xyz" class="inline-block mt-8 bg-[#4A7FFF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#3a66cc]">
+            Explorar contenido
           </a>
         </div>`;
-      document.getElementById("pagination").classList.add("hidden");
     }
 
     function renderPage(page) {
       currentPage = page;
       const contenedor = document.getElementById("content-section");
       contenedor.innerHTML = "";
+      const startIndex = (page - 1) * ITEMS_PER_PAGE;
+      const pageItems = favoritos.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-      const start = (page - 1) * ITEMS_PER_PAGE;
-      const pageItems = favoritos.slice(start, start + ITEMS_PER_PAGE);
-
-      pageItems.forEach(fav => {
-        const cardHTML = `
-          <div class="netflix-card bg-[#222] cursor-pointer group" onclick="window.open('${fav.url}', '_blank')">
-            <div class="relative">
-              <img src="${fav.poster}" alt="${fav.titulo}" class="w-full aspect-[2/3] object-cover rounded-t-lg">
-              <button onclick="event.stopImmediatePropagation(); deleteFavorite('${fav.id}');" 
-                      class="delete-btn absolute top-3 right-3 w-8 h-8 bg-black/70 hover:bg-[#E50914] text-white rounded-full flex items-center justify-center text-xl font-bold z-10">
-                ✕
-              </button>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all flex items-end p-4">
-                <div>
-                  <p class="font-semibold text-lg leading-tight">${fav.titulo}</p>
-                  <p class="text-sm text-white/70">${fav.año}</p>
-                </div>
-              </div>
-            </div>
-          </div>`;
-        contenedor.innerHTML += cardHTML;
+      pageItems.forEach(e => {
+        const article = document.createElement("article");
+        article.className = "relative rounded-lg overflow-hidden cursor-pointer select-none";
+        article.innerHTML = `
+          <a href="${e.url}" target="_blank">
+            <img src="${e.poster}" alt="${e.titulo}" loading="lazy" class="w-full h-auto rounded-lg object-cover transition-transform duration-300 hover:scale-105"/>
+            <div class="absolute top-2 right-2 bg-white/90 text-black text-xs font-semibold rounded-full px-2 py-0.5">${e.tipo}</div>
+            
+            <!-- BOTÓN ELIMINAR (X) -->
+            <button onclick="event.stopImmediatePropagation(); deleteFavorite('${e.id}');" 
+                    class="absolute top-2 left-2 bg-red-600 hover:bg-red-700 text-white text-xl w-8 h-8 rounded-full flex items-center justify-center font-bold">
+              ✕
+            </button>
+          </a>
+          <div class="mt-2 font-semibold text-sm leading-tight truncate">${e.titulo}</div>
+          <div class="text-xs text-white/70">${e.año}</div>
+        `;
+        contenedor.appendChild(article);
       });
 
       if (pageItems.length === 0 && favoritos.length > 0) {
-        contenedor.innerHTML = `<div class="col-span-full text-center py-12 text-white/50">No hay más favoritos en esta página.</div>`;
+        contenedor.innerHTML = `<div class="col-span-full text-center text-white/70 py-8"><p>No hay más favoritos en esta página.</p></div>`;
       }
-
-      actualizarPaginacion();
-      document.getElementById("pagination").classList.remove("hidden");
+      actualizarBotones();
     }
 
-    function actualizarPaginacion() {
+    function actualizarBotones() {
       const totalPages = Math.ceil(favoritos.length / ITEMS_PER_PAGE);
-      document.getElementById("pageInfo").textContent = `${currentPage} de ${totalPages}`;
       document.getElementById("prevPage").disabled = currentPage === 1;
       document.getElementById("nextPage").disabled = currentPage >= totalPages;
     }
 
-    function prevPage() { if (currentPage > 1) renderPage(currentPage - 1); }
-    function nextPage() {
-      const total = Math.ceil(favoritos.length / ITEMS_PER_PAGE);
-      if (currentPage < total) renderPage(currentPage + 1);
-    }
+    document.getElementById("prevPage").addEventListener("click", () => { if (currentPage > 1) { currentPage--; renderPage(currentPage); } });
+    document.getElementById("nextPage").addEventListener("click", () => {
+      const totalPages = Math.ceil(favoritos.length / ITEMS_PER_PAGE);
+      if (currentPage < totalPages) { currentPage++; renderPage(currentPage); }
+    });
 
-    // ==================== EXPONER FUNCIONES GLOBALMENTE ====================
+    // ==================== EXPONER FUNCIONES GLOBALES ====================
     window.deleteFavorite = deleteFavorite;
     window.deleteAllFavorites = deleteAllFavorites;
-    window.logout = logout;
-    window.prevPage = prevPage;
-    window.nextPage = nextPage;
 
     // ==================== INICIO ====================
     window.addEventListener("load", loadFavoritos);
-
-    // Seguridad preloader
-    setTimeout(() => {
-      const preloader = document.getElementById("preloader");
-      if (preloader) preloader.classList.add("hide");
-    }, 8000);
   </script>
 </body>
 </html>
