@@ -236,7 +236,7 @@ async function loadImages() {
         const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=es-ES`);
         const data = await res.json();
         images = data.results.slice(0, 5).map(m => IMG + m.backdrop_path).filter(u => u);
-        
+       
         if (images.length > 0) {
             document.getElementById("bg1").style.backgroundImage = `url(${images[0]})`;
             startRotation();
@@ -252,7 +252,6 @@ function startRotation() {
         const bg1 = document.getElementById("bg1");
         const bg2 = document.getElementById("bg2");
         const next = images[index];
-
         if (active === 1) {
             bg2.style.backgroundImage = `url(${next})`;
             bg2.style.opacity = 1;
@@ -292,14 +291,12 @@ const passwordInput = document.getElementById("password");
 const remember = document.getElementById("remember");
 const togglePass = document.getElementById("togglePass");
 const resetBtn = document.getElementById("reset-pass");
-
 let isLogin = true;
 
 // ==================== Guardar / Cargar credenciales ====================
 function loadSavedCredentials() {
     const savedEmail = localStorage.getItem("email");
     const savedPassword = localStorage.getItem("password");
-
     if (savedEmail) {
         emailInput.value = savedEmail;
         remember.checked = true;
@@ -326,14 +323,10 @@ function clearCredentials() {
 function updateUIForLoggedState() {
     const savedEmail = localStorage.getItem("email");
     const savedPassword = localStorage.getItem("password");
-
     if (savedEmail && savedPassword) {
-        // Ya hay sesión guardada
         title.textContent = "Bienvenido de nuevo";
         btn.textContent = "Iniciar sesión";
-        toggle.style.display = "none"; // Ocultar "Regístrate"
-
-        // Crear botón de Cerrar Sesión
+        toggle.style.display = "none";
         let logoutBtn = document.getElementById("logout-btn");
         if (!logoutBtn) {
             logoutBtn = document.createElement("button");
@@ -343,12 +336,11 @@ function updateUIForLoggedState() {
             logoutBtn.style.marginTop = "15px";
             logoutBtn.addEventListener("click", () => {
                 clearCredentials();
-                location.reload(); // Recargar para volver al estado inicial
+                location.reload();
             });
             form.parentNode.appendChild(logoutBtn);
         }
     } else {
-        // Estado normal (sin sesión guardada)
         title.textContent = "Iniciar sesión";
         btn.textContent = "Iniciar sesión";
         toggle.style.display = "block";
@@ -391,7 +383,7 @@ toggle.addEventListener("click", () => {
     toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
 });
 
-// ==================== Form Submit ====================
+// ==================== Form Submit (CON AUTOLOGIN AL BLOGGER) ====================
 form.addEventListener("submit", async e => {
     e.preventDefault();
     errorBox.textContent = "";
@@ -409,18 +401,28 @@ form.addEventListener("submit", async e => {
             clearCredentials();
         }
 
+        // Destino por defecto
+        let redirectUrl = "https://www.lzplayhd.xyz";
+
+        // Si vino desde el botón de favoritos del Blogger
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get("returnTo");
+        if (returnTo) {
+            redirectUrl = decodeURIComponent(returnTo);
+        }
+
         if (isLogin) {
             await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = "https://www.lzplayhd.xyz";
         } else {
             await createUserWithEmailAndPassword(auth, email, password);
-            // Después de registrar, guardamos y cambiamos a login
-            saveCredentials(email, password);
-            isLogin = true;
-            updateUIForLoggedState();
-            errorBox.style.color = "#4CAF50";
-            errorBox.textContent = "¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.";
         }
+
+        // AÑADIMOS PARÁMETROS PARA AUTOLOGIN EN EL BLOGGER
+        const separator = redirectUrl.includes("?") ? "&" : "?";
+        redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
+
+        window.location.href = redirectUrl;
+
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
         switch (err.code) {
@@ -456,6 +458,5 @@ window.onload = () => {
     updateUIForLoggedState();
 };
 </script>
-
 </body>
 </html>
