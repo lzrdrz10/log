@@ -55,7 +55,8 @@
     <!-- HEADER -->
     <div class="flex items-center justify-between mb-10">
       <div class="flex items-center gap-4">
-        <button onclick="history.back()" class="flex items-center justify-center w-11 h-11 bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition">
+        <button onclick="history.back()" 
+                class="flex items-center justify-center w-11 h-11 bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition">
           <i class="fa-solid fa-arrow-left text-2xl"></i>
         </button>
       </div>
@@ -76,7 +77,7 @@
     <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 pb-20"></div>
   </div>
 
-  <!-- MODAL -->
+  <!-- MODAL FLOTANTE -->
   <div id="confirmModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="hideConfirmModal()"></div>
     
@@ -108,7 +109,7 @@
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
     import { getFirestore, collection, query, orderBy, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-    const firebaseConfig = { /* tu config actual */ 
+    const firebaseConfig = {
       apiKey: "AIzaSyDA6mRLGymepNx3EXoCOH7CUiBXd6syGeg",
       authDomain: "sign-in-method-b7675.firebaseapp.com",
       projectId: "sign-in-method-b7675",
@@ -170,7 +171,6 @@
     async function executeDelete() {
       if (!currentUserUid) return;
 
-      // ←←← CORRECCIÓN: guardamos los valores ANTES de cerrar el modal
       const idToDelete = pendingDeleteId;
       const deleteAllFlag = isDeleteAll;
 
@@ -195,24 +195,128 @@
       }
     }
 
-    // ==================== ELIMINAR UNO ====================
     function deleteFavorite(docId, title) {
       if (!currentUserUid) return;
       const message = `Se eliminará <strong>"${title}"</strong> permanentemente de tu lista de favoritos.`;
       showConfirmModal("¿Eliminar de favoritos?", message, docId, false);
     }
 
-    // ==================== ELIMINAR TODOS ====================
     function showDeleteAllModal() {
       if (!currentUserUid || favoritos.length === 0) return;
       const message = `Se eliminarán <strong>${favoritos.length} contenidos</strong> permanentemente.<br>¿Estás seguro?`;
       showConfirmModal("¿Eliminar todos los favoritos?", message, null, true);
     }
 
-    // ==================== CARGAR Y RENDERIZAR (sin cambios importantes) ====================
-    async function loadFavoritos() { /* ... igual que antes ... */ }
-    function renderizarGrid() { /* ... igual que antes (solo copia-pega el que tenías) ... */ }
-    function iniciarFondoDinamico() { /* ... igual ... */ }
+    // ==================== CARGAR FAVORITOS ====================
+    async function loadFavoritos() {
+      await tryAutoLogin();
+      const user = auth.currentUser;
+      if (!user) {
+        const loginUrl = "https://lzrdrz10.github.io/log/";
+        window.location.href = `${loginUrl}?returnTo=${encodeURIComponent(window.location.href)}`;
+        return;
+      }
+      currentUserUid = user.uid;
+
+      try {
+        const q = query(collection(db, `users/${user.uid}/favorites`), orderBy("savedAt", "desc"));
+        const snapshot = await getDocs(q);
+        favoritos = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title || "Sin título",
+            poster: data.poster || "https://via.placeholder.com/780x439?text=No+Image",
+            year: data.year || "—",
+            synopsis: data.synopsis || "",
+            rating: data.rating || "",
+            duration: data.duration || "",
+            type: data.type || "unknown",
+            url: data.url,
+            season: data.season || "",
+            episode: data.episode || "",
+            serieName: data.serieName || ""
+          };
+        });
+        renderizarGrid();
+        iniciarFondoDinamico();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('grid').innerHTML = `<div class="col-span-full text-center py-12 text-red-400"><i class="fa-solid fa-triangle-exclamation text-6xl mb-6"></i><p>Error al cargar favoritos.</p></div>`;
+      }
+    }
+
+    // ==================== RENDERIZAR GRID ====================
+    function renderizarGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      if (favoritos.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-20">
+            <i class="fa-solid fa-heart text-8xl text-zinc-600 mb-6"></i>
+            <h2 class="text-3xl font-semibold mb-3">Aún no tienes favoritos</h2>
+            <p class="text-zinc-400">Guarda películas, series o episodios con el botón ❤️</p>
+          </div>`;
+        return;
+      }
+
+      favoritos.forEach(fav => {
+        let typeIcon = 'fa-film', typeColor = 'bg-red-600', typeText = 'Película';
+        if (fav.type === 'serie') { typeIcon = 'fa-tv'; typeColor = 'bg-purple-600'; typeText = 'Serie'; }
+        else if (fav.type === 'episode') { typeIcon = 'fa-list'; typeColor = 'bg-blue-600'; typeText = 'Episodio'; }
+
+        const cardHTML = `
+          <div class="card cursor-pointer group relative">
+            <a href="${fav.url}" class="block">
+              <div class="poster">
+                <img src="${fav.poster}" class="w-full aspect-video object-cover rounded-2xl" alt="${fav.title}">
+                <div class="play-overlay absolute inset-0 flex items-center justify-center">
+                  <div class="w-14 h-14 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-2xl transition">
+                    <i class="fa-solid fa-play text-black ml-0.5 text-2xl"></i>
+                  </div>
+                </div>
+                <div class="absolute top-4 left-4 ${typeColor} text-white text-xs font-bold px-4 py-1 rounded-full flex items-center gap-1">
+                  <i class="fa-solid ${typeIcon}"></i> ${typeText}
+                </div>
+              </div>
+              <div class="mt-4 px-1">
+                <h3 class="font-semibold text-xl leading-tight line-clamp-1">${fav.title}</h3>
+                <div class="flex items-center gap-3 text-sm text-zinc-400 mt-2">
+                  ${fav.year && fav.year !== "—" ? `<span class="flex items-center gap-1"><i class="fa-solid fa-calendar"></i>${fav.year}</span>` : ''}
+                  ${fav.rating ? `<span class="flex items-center gap-1"><i class="fa-solid fa-star text-amber-400"></i>${fav.rating}</span>` : ''}
+                  ${fav.duration ? `<span class="flex items-center gap-1"><i class="fa-solid fa-clock"></i>${fav.duration}</span>` : ''}
+                </div>
+                <p class="text-zinc-400 text-sm mt-2 line-clamp-2">${fav.synopsis || 'Sin sinopsis disponible.'}</p>
+              </div>
+            </a>
+            
+            <button onclick="event.stopImmediatePropagation(); deleteFavorite('${fav.id}', '${fav.title.replace(/'/g, "\\'")}');"
+                    class="delete-btn absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white text-2xl w-10 h-10 rounded-2xl flex items-center justify-center shadow-2xl">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        `;
+        grid.innerHTML += cardHTML;
+      });
+    }
+
+    // ==================== FONDO DINÁMICO ====================
+    function iniciarFondoDinamico() {
+      const backdrops = favoritos.map(f => f.poster).filter(Boolean);
+      if (backdrops.length === 0) return;
+      const bg1 = document.getElementById('bg1');
+      const bg2 = document.getElementById('bg2');
+      let indice = 0, activo = bg1, inactivo = bg2;
+      bg1.src = backdrops[0];
+      setInterval(() => {
+        indice = (indice + 1) % backdrops.length;
+        inactivo.src = backdrops[indice];
+        activo.style.opacity = '0';
+        inactivo.style.opacity = '1';
+        [activo, inactivo] = [inactivo, activo];
+      }, 7000);
+    }
 
     // ==================== INICIO ====================
     window.addEventListener("load", loadFavoritos);
