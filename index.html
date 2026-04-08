@@ -163,21 +163,14 @@ button:disabled{opacity:.7;cursor:not-allowed}
   margin-bottom:10px;
   background:#333;
 }
+.hidden { display: none !important; }
 
-/* ==================== CLASE OCULTAR ==================== */
-.hidden {
-  display: none !important;
-}
-
-/* Panel de dos botones */
+/* Panel rápido */
 #quick-panel {
   text-align: center;
   padding: 20px 0;
 }
-#quick-panel h2 {
-  font-size: 26px;
-  margin-bottom: 8px;
-}
+#quick-panel h2 { font-size: 26px; margin-bottom: 8px; }
 #quick-panel .email {
   font-size: 15px;
   color: #aaa;
@@ -208,7 +201,7 @@ button:disabled{opacity:.7;cursor:not-allowed}
 <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png">
 
 <div class="form-wrapper">
-  <!-- PANEL DE DOS BOTONES (solo aparece DESPUÉS de login/registro exitoso) -->
+  <!-- PANEL DE DOS BOTONES -->
   <div id="quick-panel" class="hidden">
     <h2>Bienvenido de nuevo</h2>
     <p class="email">Iniciarás sesión con:</p>
@@ -218,7 +211,7 @@ button:disabled{opacity:.7;cursor:not-allowed}
     <button onclick="logout()" class="btn-logout">Cerrar sesión / Usar otra cuenta</button>
   </div>
 
-  <!-- FORMULARIO (solo se muestra cuando NO hay credenciales guardadas) -->
+  <!-- FORMULARIO -->
   <div id="normal-form">
     <h2 id="form-title">Iniciar sesión</h2>
     <div id="error-msg" class="error"></div>
@@ -317,7 +310,6 @@ function clearCredentials() {
     localStorage.removeItem("password");
 }
 
-// ==================== MOSTRAR SOLO UN PANEL ====================
 function checkSavedCredentials() {
     const savedEmail = localStorage.getItem("email");
     const savedPass = localStorage.getItem("password");
@@ -332,7 +324,20 @@ function checkSavedCredentials() {
     }
 }
 
-// ==================== AUTO LOGIN ====================
+// ==================== REDIRECCIÓN AL SITIO PRINCIPAL ====================
+function redirectToMain(email, password) {
+    let redirectUrl = "https://www.lzplayhd.xyz";
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnTo = urlParams.get("returnTo");
+    if (returnTo) redirectUrl = decodeURIComponent(returnTo);
+
+    const separator = redirectUrl.includes("?") ? "&" : "?";
+    redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
+    
+    window.location.href = redirectUrl;
+}
+
+// ==================== AUTO LOGIN (desde panel rápido) ====================
 async function autoLogin() {
     const email = localStorage.getItem("email");
     const password = localStorage.getItem("password");
@@ -340,16 +345,7 @@ async function autoLogin() {
 
     try {
         await signInWithEmailAndPassword(auth, email, password);
-
-        let redirectUrl = "https://www.lzplayhd.xyz";
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnTo = urlParams.get("returnTo");
-        if (returnTo) redirectUrl = decodeURIComponent(returnTo);
-
-        const separator = redirectUrl.includes("?") ? "&" : "?";
-        redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
-        
-        window.location.href = redirectUrl;
+        redirectToMain(email, password);
     } catch (err) {
         alert("Error al iniciar sesión. Intenta con otra cuenta.");
         clearCredentials();
@@ -399,7 +395,7 @@ toggle.addEventListener("click", () => {
     toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
 });
 
-// ==================== SUBMIT ====================
+// ==================== SUBMIT (LOGIN O REGISTRO) ====================
 form.addEventListener("submit", async e => {
     e.preventDefault();
     errorBox.textContent = "";
@@ -418,7 +414,7 @@ form.addEventListener("submit", async e => {
         }
 
         saveCredentials(email, password);
-        checkSavedCredentials();   // ← Cambia al panel de dos botones
+        redirectToMain(email, password);   // ← Ahora redirige correctamente
 
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
