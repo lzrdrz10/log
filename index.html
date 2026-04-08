@@ -12,8 +12,9 @@
 <link rel="shortcut icon" href="img/favicon.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<!-- PWA -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22LzPlay%21%22%2C%22short_name%22%3A%22LzPlay%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23e50914%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fblogger.googleusercontent.com%2Fimg%2Fb%2FR29vZ2xl%2FAVVXsEhQRGlFxe3v45gb--Z63FxVPZT1rXWxoR4MkszhJKMC3TIZz6Vq4FJbFifEH6e1wKWb3I1FG7ldeMpQkQGg42bZcWvoxTtP3vYYutoTPhH6dt6QYPnGcHBCy6slwDebHLlwxRGcuI6HkxkoJIwyLMWbqnccAb8t-wBHSNvdCBva4Lblq8V96nPUiBOAdd3L%2Fs1290%2FImagen%2520de%2520WhatsApp%25202025-08-27%2520a%2520las%252011.30.04_0601b9e6.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D">
+<!-- ====================== PWA CORREGIDO ====================== -->
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22LzPlay%21%22%2C%22short_name%22%3A%22LzPlay%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23e50914%22%2C%22description%22%3A%22LzPlay%20-%20Streaming%20de%20pel%C3%ADculas%2C%20series%20y%20episodios%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fblogger.googleusercontent.com%2Fimg%2Fb%2FR29vZ2xl%2FAVVXsEhQRGlFxe3v45gb--Z63FxVPZT1rXWxoR4MkszhJKMC3TIZz6Vq4FJbFifEH6e1wKWb3I1FG7ldeMpQkQGg42bZcWvoxTtP3vYYutoTPhH6dt6QYPnGcHBCy6slwDebHLlwxRGcuI6HkxkoJIwyLMWbqnccAb8t-wBHSNvdCBva4Lblq8V96nPUiBOAdd3L%2Fs1290%2FImagen%2520de%2520WhatsApp%25202025-08-27%2520a%2520las%252011.30.04_0601b9e6.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%2C%22purpose%22%3A%22any%22%7D%5D%7D">
+
 <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQRGlFxe3v45gb--Z63FxVPZT1rXWxoR4MkszhJKMC3TIZz6Vq4FJbFifEH6e1wKWb3I1FG7ldeMpQkQGg42bZcWvoxTtP3vYYutoTPhH6dt6QYPnGcHBCy6slwDebHLlwxRGcuI6HkxkoJIwyLMWbqnccAb8t-wBHSNvdCBva4Lblq8V96nPUiBOAdd3L/s1290/Imagen%20de%20WhatsApp%202025-08-27%20a%20las%2011.30.04_0601b9e6.jpg">
 
 <style>
@@ -42,7 +43,6 @@ button:disabled{opacity:.7;cursor:not-allowed}
 .toggle-link:hover{color:#b3b3b3}
 #reset-pass{display:none;margin-bottom:10px;background:#333;}
 .hidden { display: none !important; }
-
 #quick-panel { text-align: center; padding: 20px 0; }
 #quick-panel h2 { font-size: 26px; margin-bottom: 8px; }
 #quick-panel .email { font-size: 15px; color: #aaa; margin-bottom: 30px; word-break: break-all; }
@@ -58,34 +58,31 @@ button:disabled{opacity:.7;cursor:not-allowed}
 <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png">
 
 <div class="form-wrapper">
-  <!-- PANEL DE DOS BOTONES -->
   <div id="quick-panel" class="hidden">
     <h2>Bienvenido de nuevo</h2>
     <p class="email">Iniciarás sesión con:</p>
     <p id="saved-email-display" class="email text-white font-medium"></p>
-    
     <button onclick="autoLogin()">Iniciar sesión</button>
     <button onclick="logout()" class="btn-logout">Cerrar sesión / Usar otra cuenta</button>
   </div>
 
-  <!-- FORMULARIO -->
   <div id="normal-form">
     <h2 id="form-title">Iniciar sesión</h2>
     <div id="error-msg" class="error"></div>
     <button id="reset-pass">Restablecer contraseña</button>
     <form id="auth-form">
-        <div class="form-control">
-            <i class="fas fa-envelope left-icon"></i>
-            <input type="email" id="email" required placeholder=" ">
-            <label>Correo electrónico</label>
-        </div>
-        <div class="form-control">
-            <i class="fas fa-lock left-icon"></i>
-            <input type="password" id="password" required placeholder=" ">
-            <label>Contraseña</label>
-            <i class="fas fa-eye toggle-pass" id="togglePass"></i>
-        </div>
-        <button id="submit-btn">Iniciar sesión</button>
+      <div class="form-control">
+        <i class="fas fa-envelope left-icon"></i>
+        <input type="email" id="email" required placeholder=" ">
+        <label>Correo electrónico</label>
+      </div>
+      <div class="form-control">
+        <i class="fas fa-lock left-icon"></i>
+        <input type="password" id="password" required placeholder=" ">
+        <label>Contraseña</label>
+        <i class="fas fa-eye toggle-pass" id="togglePass"></i>
+      </div>
+      <button id="submit-btn">Iniciar sesión</button>
     </form>
     <a id="toggle-link" class="toggle-link">¿Nuevo en LzPlay? Regístrate</a>
   </div>
@@ -144,7 +141,6 @@ const auth = getAuth(app);
 const normalForm = document.getElementById("normal-form");
 const quickPanel = document.getElementById("quick-panel");
 const savedEmailDisplay = document.getElementById("saved-email-display");
-
 const form = document.getElementById("auth-form");
 const title = document.getElementById("form-title");
 const toggle = document.getElementById("toggle-link");
@@ -154,7 +150,6 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const togglePass = document.getElementById("togglePass");
 const resetBtn = document.getElementById("reset-pass");
-
 let isLogin = true;
 
 // ==================== LOCALSTORAGE ====================
@@ -168,11 +163,9 @@ function clearCredentials() {
     emailInput.value = "";
     passwordInput.value = "";
 }
-
 function checkSavedCredentials() {
     const savedEmail = localStorage.getItem("email");
     const savedPass = localStorage.getItem("password");
-
     if (savedEmail && savedPass) {
         normalForm.classList.add("hidden");
         quickPanel.classList.remove("hidden");
@@ -189,10 +182,8 @@ function redirectToMain(email, password) {
     const urlParams = new URLSearchParams(window.location.search);
     const returnTo = urlParams.get("returnTo");
     if (returnTo) redirectUrl = decodeURIComponent(returnTo);
-
     const separator = redirectUrl.includes("?") ? "&" : "?";
     redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
-    
     window.location.href = redirectUrl;
 }
 
@@ -201,7 +192,6 @@ async function autoLogin() {
     const email = localStorage.getItem("email");
     const password = localStorage.getItem("password");
     if (!email || !password) return;
-
     try {
         await signInWithEmailAndPassword(auth, email, password);
         redirectToMain(email, password);
@@ -261,40 +251,25 @@ form.addEventListener("submit", async e => {
     resetBtn.style.display = "none";
     btn.textContent = "Cargando...";
     btn.disabled = true;
-
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
-
     try {
         if (isLogin) {
             await signInWithEmailAndPassword(auth, email, password);
         } else {
             await createUserWithEmailAndPassword(auth, email, password);
         }
-
         saveCredentials(email, password);
         redirectToMain(email, password);
-
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
         switch (err.code) {
-            case "auth/invalid-credential":
-            case "auth/wrong-password":
-                message = "Contraseña incorrecta";
-                resetBtn.style.display = "block";
-                break;
-            case "auth/user-not-found":
-                message = "Este correo no está registrado";
-                break;
-            case "auth/email-already-in-use":
-                message = "Este correo ya tiene una cuenta";
-                break;
-            case "auth/weak-password":
-                message = "La contraseña debe tener al menos 6 caracteres";
-                break;
-            case "auth/invalid-email":
-                message = "Correo inválido";
-                break;
+            case "auth/invalid-credential": case "auth/wrong-password":
+                message = "Contraseña incorrecta"; resetBtn.style.display = "block"; break;
+            case "auth/user-not-found": message = "Este correo no está registrado"; break;
+            case "auth/email-already-in-use": message = "Este correo ya tiene una cuenta"; break;
+            case "auth/weak-password": message = "La contraseña debe tener al menos 6 caracteres"; break;
+            case "auth/invalid-email": message = "Correo inválido"; break;
         }
         errorBox.textContent = message;
     }
@@ -308,9 +283,17 @@ window.onload = () => {
     checkSavedCredentials();
 };
 
-// ==================== EXPONER FUNCIONES AL GLOBAL (IMPORTANTE) ====================
+// ==================== EXPONER FUNCIONES ====================
 window.autoLogin = autoLogin;
 window.logout = logout;
+
+// ==================== SERVICE WORKER (para pasar PWABuilder) ====================
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
+        self.addEventListener('install', () => self.skipWaiting());
+        self.addEventListener('activate', () => self.clients.claim());
+    `)).then(() => console.log('Service Worker registrado'));
+}
 </script>
 </body>
 </html>
