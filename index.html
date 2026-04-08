@@ -6,7 +6,8 @@
 <title>LzPlayLog</title>
 <link rel="shortcut icon" href="img/favicon.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
+<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool@latest'></script>
+    <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap");
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -153,9 +154,36 @@ display:none;
 margin-bottom:10px;
 background:#333;
 }
-@media (max-width:600px){
-.form-wrapper{padding:40px 40px 45px}
-.overlay{background:rgba(0,0,0,.55)}
+
+/* ====================== NUEVO PANEL DE INICIO RÁPIDO ====================== */
+#quick-panel {
+  text-align: center;
+  padding: 20px 0;
+}
+#quick-panel h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+#quick-panel .email {
+  font-size: 15px;
+  color: #aaa;
+  margin-bottom: 30px;
+  word-break: break-all;
+}
+#quick-panel button {
+  margin: 12px 0;
+  font-size: 17px;
+  padding: 18px;
+}
+#quick-panel .btn-logout {
+  background: transparent;
+  border: 2px solid #666;
+  color: #ccc;
+}
+#quick-panel .btn-logout:hover {
+  background: #333;
+  border-color: #fff;
+  color: #fff;
 }
 </style>
 </head>
@@ -164,25 +192,39 @@ background:#333;
 <div class="bg" id="bg2" style="opacity:0;"></div>
 <div class="overlay"></div>
 <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png">
+
 <div class="form-wrapper">
-<h2 id="form-title">Iniciar sesión</h2>
-<div id="error-msg" class="error"></div>
-<button id="reset-pass">Restablecer contraseña</button>
-<form id="auth-form">
-    <div class="form-control">
-        <i class="fas fa-envelope left-icon"></i>
-        <input type="email" id="email" required placeholder=" ">
-        <label>Correo electrónico</label>
-    </div>
-    <div class="form-control">
-        <i class="fas fa-lock left-icon"></i>
-        <input type="password" id="password" required placeholder=" ">
-        <label>Contraseña</label>
-        <i class="fas fa-eye toggle-pass" id="togglePass"></i>
-    </div>
-    <button id="submit-btn">Iniciar sesión</button>
-</form>
-<a id="toggle-link" class="toggle-link">¿Nuevo en LzPlay? Regístrate</a>
+  <!-- PANEL DE INICIO RÁPIDO (se muestra cuando hay credenciales guardadas) -->
+  <div id="quick-panel" class="hidden">
+    <h2>Bienvenido de nuevo</h2>
+    <p class="email">Iniciarás sesión con:</p>
+    <p id="saved-email-display" class="email text-white font-medium"></p>
+    
+    <button onclick="autoLogin()">Iniciar sesión</button>
+    <button onclick="logout()" class="btn-logout">Cerrar sesión / Usar otra cuenta</button>
+  </div>
+
+  <!-- FORMULARIO NORMAL (login / registro) -->
+  <div id="normal-form">
+    <h2 id="form-title">Iniciar sesión</h2>
+    <div id="error-msg" class="error"></div>
+    <button id="reset-pass">Restablecer contraseña</button>
+    <form id="auth-form">
+        <div class="form-control">
+            <i class="fas fa-envelope left-icon"></i>
+            <input type="email" id="email" required placeholder=" ">
+            <label>Correo electrónico</label>
+        </div>
+        <div class="form-control">
+            <i class="fas fa-lock left-icon"></i>
+            <input type="password" id="password" required placeholder=" ">
+            <label>Contraseña</label>
+            <i class="fas fa-eye toggle-pass" id="togglePass"></i>
+        </div>
+        <button id="submit-btn">Iniciar sesión</button>
+    </form>
+    <a id="toggle-link" class="toggle-link">¿Nuevo en LzPlay? Regístrate</a>
+  </div>
 </div>
 
 <script type="module">
@@ -190,20 +232,16 @@ background:#333;
 const TMDB_API_KEY = "38e497c6c1a043d1341416e80915669f";
 const IMG = "https://image.tmdb.org/t/p/original";
 let images = [], index = 0, active = 1;
-
 async function loadImages() {
     try {
         const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=es-ES`);
         const data = await res.json();
         images = data.results.slice(0, 5).map(m => IMG + m.backdrop_path).filter(u => u);
-     
         if (images.length > 0) {
             document.getElementById("bg1").style.backgroundImage = `url(${images[0]})`;
             startRotation();
         }
-    } catch (e) {
-        console.error(e);
-    }
+    } catch (e) { console.error(e); }
 }
 function startRotation() {
     setInterval(() => {
@@ -238,7 +276,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// ==================== UI Elements ====================
+// ==================== ELEMENTOS ====================
+const normalForm = document.getElementById("normal-form");
+const quickPanel = document.getElementById("quick-panel");
+const savedEmailDisplay = document.getElementById("saved-email-display");
+
 const form = document.getElementById("auth-form");
 const title = document.getElementById("form-title");
 const toggle = document.getElementById("toggle-link");
@@ -248,9 +290,10 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const togglePass = document.getElementById("togglePass");
 const resetBtn = document.getElementById("reset-pass");
+
 let isLogin = true;
 
-// ==================== LocalStorage ====================
+// ==================== LOCALSTORAGE ====================
 function saveCredentials(email, password) {
     localStorage.setItem("email", email);
     localStorage.setItem("password", password);
@@ -258,11 +301,62 @@ function saveCredentials(email, password) {
 function clearCredentials() {
     localStorage.removeItem("email");
     localStorage.removeItem("password");
-    emailInput.value = "";
-    passwordInput.value = "";
 }
 
-// ==================== Toggle Password ====================
+// ==================== MOSTRAR PANTALLA SEGÚN CREDENCIALES ====================
+function checkSavedCredentials() {
+    const savedEmail = localStorage.getItem("email");
+    const savedPass = localStorage.getItem("password");
+
+    if (savedEmail && savedPass) {
+        // Mostrar panel rápido
+        normalForm.classList.add("hidden");
+        quickPanel.classList.remove("hidden");
+        savedEmailDisplay.textContent = savedEmail;
+    } else {
+        // Mostrar formulario normal
+        normalForm.classList.remove("hidden");
+        quickPanel.classList.add("hidden");
+    }
+}
+
+// ==================== AUTO LOGIN CON CREDENCIALES GUARDADAS ====================
+async function autoLogin() {
+    const email = localStorage.getItem("email");
+    const password = localStorage.getItem("password");
+    
+    if (!email || !password) return;
+
+    errorBox.textContent = "";
+    btn.textContent = "Cargando...";   // reutilizamos el botón del formulario aunque esté oculto
+    btn.disabled = true;
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+
+        let redirectUrl = "https://www.lzplayhd.xyz";
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get("returnTo");
+        if (returnTo) redirectUrl = decodeURIComponent(returnTo);
+
+        const separator = redirectUrl.includes("?") ? "&" : "?";
+        redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
+        
+        window.location.href = redirectUrl;
+    } catch (err) {
+        errorBox.textContent = "Error al iniciar sesión automáticamente. Intenta con otra cuenta.";
+        clearCredentials();
+        checkSavedCredentials(); // vuelve al formulario
+    }
+}
+
+// ==================== CERRAR SESIÓN (eliminar credenciales) ====================
+function logout() {
+    clearCredentials();
+    checkSavedCredentials(); // muestra el formulario normal
+}
+
+// ==================== TOGGLE CONTRASEÑA ====================
 togglePass.addEventListener("click", () => {
     if (passwordInput.type === "password") {
         passwordInput.type = "text";
@@ -273,7 +367,7 @@ togglePass.addEventListener("click", () => {
     }
 });
 
-// ==================== Reset Password ====================
+// ==================== RESTABLECER CONTRASEÑA ====================
 resetBtn.addEventListener("click", async () => {
     const email = emailInput.value.trim();
     if (!email) {
@@ -283,14 +377,14 @@ resetBtn.addEventListener("click", async () => {
     try {
         await sendPasswordResetEmail(auth, email);
         errorBox.style.color = "#4CAF50";
-        errorBox.textContent = "Se envió un enlace de recuperación a tu correo. Revisa también el Spam.";
+        errorBox.textContent = "Se envió un enlace de recuperación a tu correo.";
         resetBtn.style.display = "none";
     } catch (err) {
         errorBox.textContent = "Error al enviar el correo";
     }
 });
 
-// ==================== Toggle Login / Register ====================
+// ==================== TOGGLE LOGIN / REGISTRO ====================
 toggle.addEventListener("click", () => {
     isLogin = !isLogin;
     title.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
@@ -298,7 +392,7 @@ toggle.addEventListener("click", () => {
     toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
 });
 
-// ==================== Form Submit (GUARDA CREDENCIALES AUTOMÁTICAMENTE) ====================
+// ==================== SUBMIT DEL FORMULARIO ====================
 form.addEventListener("submit", async e => {
     e.preventDefault();
     errorBox.textContent = "";
@@ -310,7 +404,13 @@ form.addEventListener("submit", async e => {
     const password = passwordInput.value.trim();
 
     try {
-        // Guardado automático (siempre)
+        if (isLogin) {
+            await signInWithEmailAndPassword(auth, email, password);
+        } else {
+            await createUserWithEmailAndPassword(auth, email, password);
+        }
+
+        // SOLO GUARDAMOS SI EL LOGIN/REGISTRO FUE EXITOSO
         saveCredentials(email, password);
 
         let redirectUrl = "https://www.lzplayhd.xyz";
@@ -318,15 +418,9 @@ form.addEventListener("submit", async e => {
         const returnTo = urlParams.get("returnTo");
         if (returnTo) redirectUrl = decodeURIComponent(returnTo);
 
-        if (isLogin) {
-            await signInWithEmailAndPassword(auth, email, password);
-        } else {
-            await createUserWithEmailAndPassword(auth, email, password);
-        }
-
         const separator = redirectUrl.includes("?") ? "&" : "?";
         redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
-       
+        
         window.location.href = redirectUrl;
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
@@ -351,15 +445,14 @@ form.addEventListener("submit", async e => {
         }
         errorBox.textContent = message;
     }
-
     btn.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
     btn.disabled = false;
 });
 
-// ==================== Inicialización ====================
+// ==================== INICIO DE LA PÁGINA ====================
 window.onload = () => {
     loadImages();
-    // ← Auto-login eliminado
+    checkSavedCredentials();   // ← Esta función decide si muestra el panel rápido o el formulario
 };
 </script>
 </body>
