@@ -1,88 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mis Favoritos</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    body { font-family: "Poppins", sans-serif; }
-    :root { --preloader-time: 3s; }
-    #preloader {
-      position: fixed; inset: 0; background: #141414;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 99999; transition: opacity 0.8s ease;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
     }
-    #preloader.hide { opacity: 0; pointer-events: none; }
-    .preloader-content { text-align: center; color: #65615F; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-    .preloader-content img { width: 220px; max-width: 80vw; filter: drop-shadow(0px -2px 9px #303030); }
-    .prog-bar-wrapper { width: 205px; height: 6px; position: relative; border-radius: 50px; overflow: hidden; }
-    .prog-bar-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #919191; border-radius: 50px; }
-    .prog-bar { position: absolute; top: 0; left: 0; width: 0; height: 100%; background: linear-gradient(to right,#e300ff,#007cf0); border-radius: 50px; animation: loadbar var(--preloader-time) forwards; }
-    @keyframes loadbar { to { width: 100%; } }
-    .preloader-extra { display: grid; grid-template-columns: auto 1fr; align-items: center; font-size: 12px; gap: 8px; }
-    .spinner div { width: 20px; height: 20px; border: 4px solid #65615F; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+    
+    .poster {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+    
+    .poster::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 25%, rgba(0, 0, 0, 0.1) 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .card:hover .poster::after {
+      opacity: 1;
+    }
+    
+    .play-overlay {
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover .play-overlay {
+      opacity: 1;
+    }
+
+    /* Fondo blur con transición suave */
+    #background img {
+      filter: blur(50px) brightness(0.45);
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    .delete-btn {
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .card:hover .delete-btn {
+      opacity: 1;
+    }
   </style>
 </head>
-<body class="bg-[#04143B] text-white min-h-screen">
-  <!-- PRELOADER -->
-  <div id="preloader">
-    <div class="preloader-content">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png" alt="Logo Preloader" />
-      <div class="prog-bar-wrapper">
-        <div class="prog-bar-bg"></div>
-        <div class="prog-bar"></div>
+<body class="bg-[#0A0A0A] text-white min-h-screen relative">
+
+  <!-- Fondo dinámico blur con imágenes de los favoritos guardados -->
+  <div id="background" class="fixed inset-0 z-[-1] overflow-hidden">
+    <img id="bg1" class="absolute inset-0 w-full h-full object-cover" alt="">
+    <img id="bg2" class="absolute inset-0 w-full h-full object-cover opacity-0" alt="">
+  </div>
+
+  <div class="max-w-screen-2xl mx-auto px-8 py-10 relative z-10">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center gap-4">
+        <i class="fa-solid fa-heart text-red-500 text-3xl"></i>
+        <h1 class="text-4xl font-bold tracking-tight">Mis Favoritos</h1>
       </div>
-      <div class="preloader-extra">
-        <div class="spinner"><div></div></div>
-        <p>Espere, cargando tus favoritos...</p>
+      <div class="flex items-center gap-4">
+        <p id="contador" class="text-zinc-400 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+          Cargando...
+        </p>
+        <button onclick="deleteAllFavorites()" 
+                class="flex items-center gap-2 bg-red-600/90 hover:bg-red-700 text-white text-sm px-5 py-2 rounded-full transition">
+          <i class="fa-solid fa-trash"></i>
+          <span>Eliminar todos</span>
+        </button>
       </div>
+    </div>
+
+    <!-- GRID RESPONSIVO -->
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8 pb-20">
+      <!-- Tarjetas generadas por JavaScript -->
     </div>
   </div>
 
-  <!-- Header -->
-  <header class="fixed top-0 left-0 w-full z-50 bg-[#04143B] flex flex-col md:flex-row items-center justify-between px-4 py-3 max-w-[1280px] mx-auto">
-    <div class="flex items-center space-x-4 w-full md:w-auto justify-between">
-      <div class="flex flex-row items-center space-x-3 mb-6">
-        <button onclick="history.back()" class="bg-[#0D1B4C] rounded-full px-4 py-1.5 text-sm font-semibold text-[#4A7FFF] flex items-center space-x-1">
-          <i class="fas fa-arrow-left"></i><span>Atrás</span>
-        </button>
-        <h1 class="text-2xl font-extrabold text-[#4A7FFF] select-none">Mis Favoritos</h1>
-      </div>
-    </div>
-
-    <!-- BOTÓN ELIMINAR TODOS (nuevo) -->
-    <button onclick="deleteAllFavorites()" 
-            class="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
-      <i class="fas fa-trash-alt"></i>
-      <span>Eliminar todos</span>
-    </button>
-  </header>
-
-  <!-- Main -->
-  <main class="max-w-[1280px] mx-auto px-4 mt-24">
-    <section id="content-section" class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      <!-- Contenido cargado dinámicamente -->
-    </section>
-    <div class="flex justify-center items-center gap-4 mt-6 mb-10">
-      <button id="prevPage" class="bg-[#0D1B4C] text-white px-4 py-2 rounded hover:bg-[#1A2A6C] disabled:opacity-50" disabled>Atrás</button>
-      <button id="nextPage" class="bg-[#0D1B4C] text-white px-4 py-2 rounded hover:bg-[#1A2A6C]" disabled>Siguiente</button>
-    </div>
-  </main>
-
+  <!-- ====================== SCRIPT FIRESTORE + UI ====================== -->
   <script type="module">
-    // ==================== PRELOADER ====================
-    document.addEventListener("DOMContentLoaded", () => {
-      const preloader = document.getElementById("preloader");
-      const duration = getComputedStyle(document.documentElement).getPropertyValue("--preloader-time").trim();
-      const ms = parseFloat(duration) * (duration.includes("ms") ? 1 : 1000);
-      setTimeout(() => preloader.classList.add("hide"), ms);
-    });
-
-    // ==================== FIREBASE ====================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
     import { getFirestore, collection, query, orderBy, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
@@ -101,9 +120,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const ITEMS_PER_PAGE = 15;
     let favoritos = [];
-    let currentPage = 1;
     let currentUserUid = null;
 
     // ==================== LOCALSTORAGE ====================
@@ -139,35 +156,36 @@
       }
     }
 
-    // ==================== ELIMINAR FAVORITO (UNO POR UNO) ====================
+    // ==================== ELIMINAR UN FAVORITO ====================
     async function deleteFavorite(docId) {
-      if (!currentUserUid || !confirm("¿Eliminar este favorito?")) return;
+      if (!currentUserUid || !confirm("¿Eliminar este contenido de favoritos?")) return;
       try {
         await deleteDoc(doc(db, `users/${currentUserUid}/favorites`, docId));
         favoritos = favoritos.filter(f => f.id !== docId);
-        renderPage(currentPage);
+        renderizarGrid();
+        iniciarFondoDinamico();
       } catch (e) {
-        alert("Error al eliminar el favorito");
+        alert("Error al eliminar");
       }
     }
 
     // ==================== ELIMINAR TODOS ====================
     async function deleteAllFavorites() {
       if (!currentUserUid || favoritos.length === 0) return;
-      if (!confirm(`¿Eliminar los ${favoritos.length} favoritos? Esta acción no se puede deshacer.`)) return;
-
+      if (!confirm(`¿Eliminar los ${favoritos.length} favoritos? Esta acción es irreversible.`)) return;
       try {
         for (const fav of favoritos) {
           await deleteDoc(doc(db, `users/${currentUserUid}/favorites`, fav.id));
         }
         favoritos = [];
-        renderEmptyState();
+        renderizarGrid();
+        iniciarFondoDinamico();
       } catch (e) {
-        alert("Error al eliminar todos los favoritos");
+        alert("Error al eliminar todos");
       }
     }
 
-    // ==================== CARGAR FAVORITOS ====================
+    // ==================== CARGAR FAVORITOS DESDE FIRESTORE ====================
     async function loadFavoritos() {
       await tryAutoLogin();
       const user = auth.currentUser;
@@ -177,101 +195,166 @@
         window.location.href = `${loginUrl}?returnTo=${returnTo}`;
         return;
       }
+
       currentUserUid = user.uid;
 
       try {
         const q = query(collection(db, `users/${user.uid}/favorites`), orderBy("savedAt", "desc"));
         const snapshot = await getDocs(q);
+
         favoritos = snapshot.docs.map(doc => {
           const data = doc.data();
           return {
             id: doc.id,
-            tipo: "Favorito",
-            titulo: data.title || "Sin título",
-            url: data.url,
-            año: data.year || "—",
-            poster: data.poster || "https://via.placeholder.com/300x450?text=No+Image"
+            title: data.title || "Sin título",
+            poster: data.poster || "https://via.placeholder.com/780x439?text=No+Image",
+            year: data.year || "—",
+            synopsis: data.synopsis || "",
+            rating: data.rating || "",
+            duration: data.duration || "",
+            type: data.type || "unknown",   // movie, serie, capitulo
+            url: data.url
           };
         });
-        if (favoritos.length === 0) {
-          renderEmptyState();
-        } else {
-          renderPage(currentPage);
-        }
+
+        renderizarGrid();
+        iniciarFondoDinamico();
+
+        document.getElementById('contador').innerHTML = `
+          <i class="fa-solid fa-heart text-red-500"></i>
+          ${favoritos.length} contenidos guardados
+        `;
+
       } catch (e) {
         console.error("Error al cargar favoritos:", e);
-        document.getElementById("content-section").innerHTML = `
-          <div class="col-span-full text-center text-red-400 py-12">
-            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-            <p>Error al cargar tus favoritos. Intenta más tarde.</p>
+        document.getElementById('grid').innerHTML = `
+          <div class="col-span-full text-center py-12 text-red-400">
+            <i class="fa-solid fa-triangle-exclamation text-6xl mb-6"></i>
+            <p class="text-xl">Error al cargar tus favoritos.<br>Intenta recargar la página.</p>
           </div>`;
       }
     }
 
-    function renderEmptyState() {
-      const contenedor = document.getElementById("content-section");
-      contenedor.innerHTML = `
-        <div class="col-span-full text-center py-16">
-          <i class="fas fa-heart text-7xl text-gray-500 mb-6"></i>
-          <h2 class="text-2xl font-semibold mb-2">Aún no tienes favoritos</h2>
-          <p class="text-white/70 max-w-md mx-auto">Ve a cualquier película o serie y presiona el botón ❤️ para guardarla aquí.</p>
-          <a href="https://www.lzplayhd.xyz" class="inline-block mt-8 bg-[#4A7FFF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#3a66cc]">
-            Explorar contenido
-          </a>
-        </div>`;
-    }
+    // ==================== RENDERIZAR GRID (con todos los nuevos campos) ====================
+    function renderizarGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
 
-    function renderPage(page) {
-      currentPage = page;
-      const contenedor = document.getElementById("content-section");
-      contenedor.innerHTML = "";
-      const startIndex = (page - 1) * ITEMS_PER_PAGE;
-      const pageItems = favoritos.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
-      pageItems.forEach(e => {
-        const article = document.createElement("article");
-        article.className = "relative rounded-lg overflow-hidden cursor-pointer select-none";
-        article.innerHTML = `
-          <a href="${e.url}" target="_blank">
-            <img src="${e.poster}" alt="${e.titulo}" loading="lazy" class="w-full h-auto rounded-lg object-cover transition-transform duration-300 hover:scale-105"/>
-            <div class="absolute top-2 right-2 bg-white/90 text-black text-xs font-semibold rounded-full px-2 py-0.5">${e.tipo}</div>
-            
-            <!-- BOTÓN ELIMINAR (X) -->
-            <button onclick="event.stopImmediatePropagation(); deleteFavorite('${e.id}');" 
-                    class="absolute top-2 left-2 bg-red-600 hover:bg-red-700 text-white text-xl w-8 h-8 rounded-full flex items-center justify-center font-bold">
-              ✕
-            </button>
-          </a>
-          <div class="mt-2 font-semibold text-sm leading-tight truncate">${e.titulo}</div>
-          <div class="text-xs text-white/70">${e.año}</div>
-        `;
-        contenedor.appendChild(article);
-      });
-
-      if (pageItems.length === 0 && favoritos.length > 0) {
-        contenedor.innerHTML = `<div class="col-span-full text-center text-white/70 py-8"><p>No hay más favoritos en esta página.</p></div>`;
+      if (favoritos.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-20">
+            <i class="fa-solid fa-heart text-8xl text-zinc-600 mb-6"></i>
+            <h2 class="text-3xl font-semibold mb-3">Aún no tienes favoritos</h2>
+            <p class="text-zinc-400 max-w-md mx-auto">Ve a cualquier película, serie o capítulo y presiona el botón ❤️ para guardarlo aquí.</p>
+          </div>`;
+        return;
       }
-      actualizarBotones();
+
+      favoritos.forEach(fav => {
+        // Icono según tipo
+        let typeIcon = 'fa-film';
+        let typeColor = 'bg-red-600';
+        let typeText = 'Película';
+        if (fav.type === 'serie') {
+          typeIcon = 'fa-tv';
+          typeColor = 'bg-purple-600';
+          typeText = 'Serie';
+        } else if (fav.type === 'capitulo') {
+          typeIcon = 'fa-list';
+          typeColor = 'bg-blue-600';
+          typeText = 'Capítulo';
+        }
+
+        const cardHTML = `
+          <div class="card cursor-pointer group relative">
+            <a href="${fav.url}" target="_blank" class="block">
+              <div class="poster">
+                <img src="${fav.poster}" 
+                     class="w-full aspect-video object-cover rounded-2xl" 
+                     alt="${fav.title}">
+                
+                <!-- Overlay play -->
+                <div class="play-overlay absolute inset-0 flex items-center justify-center">
+                  <div class="w-14 h-14 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-2xl transition">
+                    <i class="fa-solid fa-play text-black ml-0.5 text-2xl"></i>
+                  </div>
+                </div>
+                
+                <!-- Badge Tipo -->
+                <div class="absolute top-4 left-4 ${typeColor} text-white text-xs font-bold px-4 py-1 rounded-full flex items-center gap-1">
+                  <i class="fa-solid ${typeIcon}"></i>
+                  ${typeText}
+                </div>
+              </div>
+              
+              <div class="mt-4 px-1">
+                <h3 class="font-semibold text-xl leading-tight line-clamp-1">${fav.title}</h3>
+                
+                <div class="flex items-center gap-3 text-sm text-zinc-400 mt-2">
+                  <span class="font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-calendar"></i>
+                    ${fav.year}
+                  </span>
+                  ${fav.rating ? `
+                    <span class="flex items-center gap-1">
+                      <i class="fa-solid fa-star text-amber-400"></i>
+                      <span>${fav.rating}</span>
+                    </span>` : ''}
+                  ${fav.duration ? `
+                    <span class="flex items-center gap-1">
+                      <i class="fa-solid fa-clock"></i>
+                      <span>${fav.duration}</span>
+                    </span>` : ''}
+                </div>
+                
+                <p class="text-zinc-400 text-sm mt-2 line-clamp-2">
+                  ${fav.synopsis || 'Sin sinopsis disponible.'}
+                </p>
+              </div>
+            </a>
+            
+            <!-- Botón eliminar -->
+            <button onclick="event.stopImmediatePropagation(); deleteFavorite('${fav.id}');" 
+                    class="delete-btn absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white text-xl w-9 h-9 rounded-full flex items-center justify-center shadow-lg">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        grid.innerHTML += cardHTML;
+      });
     }
 
-    function actualizarBotones() {
-      const totalPages = Math.ceil(favoritos.length / ITEMS_PER_PAGE);
-      document.getElementById("prevPage").disabled = currentPage === 1;
-      document.getElementById("nextPage").disabled = currentPage >= totalPages;
+    // ==================== FONDO BLUR DINÁMICO (usa los posters guardados) ====================
+    function iniciarFondoDinamico() {
+      const backdrops = favoritos.map(f => f.poster).filter(Boolean);
+      if (backdrops.length === 0) return;
+
+      const bg1 = document.getElementById('bg1');
+      const bg2 = document.getElementById('bg2');
+      
+      let indice = 0;
+      let activo = bg1;
+      let inactivo = bg2;
+
+      bg1.src = backdrops[0];
+
+      setInterval(() => {
+        indice = (indice + 1) % backdrops.length;
+        inactivo.src = backdrops[indice];
+        
+        activo.style.opacity = '0';
+        inactivo.style.opacity = '1';
+        
+        [activo, inactivo] = [inactivo, activo];
+      }, 7000);
     }
-
-    document.getElementById("prevPage").addEventListener("click", () => { if (currentPage > 1) { currentPage--; renderPage(currentPage); } });
-    document.getElementById("nextPage").addEventListener("click", () => {
-      const totalPages = Math.ceil(favoritos.length / ITEMS_PER_PAGE);
-      if (currentPage < totalPages) { currentPage++; renderPage(currentPage); }
-    });
-
-    // ==================== EXPONER FUNCIONES GLOBALES ====================
-    window.deleteFavorite = deleteFavorite;
-    window.deleteAllFavorites = deleteAllFavorites;
 
     // ==================== INICIO ====================
     window.addEventListener("load", loadFavoritos);
+
+    // Exponer funciones globales para los botones onclick
+    window.deleteFavorite = deleteFavorite;
+    window.deleteAllFavorites = deleteAllFavorites;
   </script>
 </body>
 </html>
