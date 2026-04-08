@@ -165,7 +165,7 @@ button:disabled{opacity:.7;cursor:not-allowed}
 }
 .hidden { display: none !important; }
 
-/* Panel rápido */
+/* Panel de dos botones */
 #quick-panel {
   text-align: center;
   padding: 20px 0;
@@ -201,7 +201,7 @@ button:disabled{opacity:.7;cursor:not-allowed}
 <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png">
 
 <div class="form-wrapper">
-  <!-- PANEL DE DOS BOTONES -->
+  <!-- PANEL DE DOS BOTONES (solo después de login/registro) -->
   <div id="quick-panel" class="hidden">
     <h2>Bienvenido de nuevo</h2>
     <p class="email">Iniciarás sesión con:</p>
@@ -308,8 +308,11 @@ function saveCredentials(email, password) {
 function clearCredentials() {
     localStorage.removeItem("email");
     localStorage.removeItem("password");
+    emailInput.value = "";
+    passwordInput.value = "";
 }
 
+// ==================== MOSTRAR PANEL CORRECTO ====================
 function checkSavedCredentials() {
     const savedEmail = localStorage.getItem("email");
     const savedPass = localStorage.getItem("password");
@@ -324,7 +327,7 @@ function checkSavedCredentials() {
     }
 }
 
-// ==================== REDIRECCIÓN AL SITIO PRINCIPAL ====================
+// ==================== REDIRECCIÓN A TU WEB ====================
 function redirectToMain(email, password) {
     let redirectUrl = "https://www.lzplayhd.xyz";
     const urlParams = new URLSearchParams(window.location.search);
@@ -337,7 +340,7 @@ function redirectToMain(email, password) {
     window.location.href = redirectUrl;
 }
 
-// ==================== AUTO LOGIN (desde panel rápido) ====================
+// ==================== AUTO LOGIN (botón del panel rápido) ====================
 async function autoLogin() {
     const email = localStorage.getItem("email");
     const password = localStorage.getItem("password");
@@ -380,7 +383,7 @@ resetBtn.addEventListener("click", async () => {
     try {
         await sendPasswordResetEmail(auth, email);
         errorBox.style.color = "#4CAF50";
-        errorBox.textContent = "Se envió un enlace de recuperación a tu correo.";
+        errorBox.textContent = "Se envió un enlace de recuperación a tu correo. Revisa también el Spam.";
         resetBtn.style.display = "none";
     } catch (err) {
         errorBox.textContent = "Error al enviar el correo";
@@ -414,7 +417,7 @@ form.addEventListener("submit", async e => {
         }
 
         saveCredentials(email, password);
-        redirectToMain(email, password);   // ← Ahora redirige correctamente
+        redirectToMain(email, password);   // ← Redirección correcta
 
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
