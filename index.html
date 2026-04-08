@@ -19,178 +19,36 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap");
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:'Roboto',sans-serif;
-  background:#000;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-}
-.bg{
-  position:absolute;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  z-index:0;
-  transition:opacity 1.5s ease;
-}
-.overlay{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.65);
-  z-index:1;
-}
-.logo{
-  position:absolute;
-  top:5px;
-  left:5px;
-  width:180px;
-  z-index:3;
-}
-.form-wrapper{
-  position:relative;
-  z-index:2;
-  background:rgba(0, 0, 0, .0%);
-  backdrop-filter:blur(12px);
-  padding:60px 68px 40px;
-  border-radius:8px;
-  width:100%;
-  max-width:420px;
-  animation:fadeIn 1s ease;
-}
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
-h2{
-  color:#fff;
-  text-align:center;
-  margin-bottom:28px;
-  font-size:28px;
-}
-.form-control{
-  position:relative;
-  margin-bottom:20px;
-}
-.form-control input{
-  width:100%;
-  height:56px;
-  background:#333;
-  border:none;
-  border-radius:4px;
-  color:#fff;
-  padding:0 50px 0 50px;
-  font-size:16px;
-}
-.form-control input:focus{
-  background:#444;
-  outline:none;
-}
-.form-control i.left-icon{
-  position:absolute;
-  left:18px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#aaa;
-  z-index:2;
-}
-.form-control label{
-  position:absolute;
-  left:50px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#aaa;
-  transition:.2s;
-  pointer-events:none;
-  font-size:16px;
-}
-.form-control input:focus ~ label,
-.form-control input:not(:placeholder-shown) ~ label{
-  top:12px;
-  font-size:12px;
-  color:#ccc;
-}
-.toggle-pass{
-  position:absolute;
-  right:15px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#aaa;
-  cursor:pointer;
-  font-size:18px;
-  z-index:3;
-  transition:.2s;
-}
-.toggle-pass:hover{
-  color:#fff;
-  transform:translateY(-50%) scale(1.1);
-}
-button{
-  width:100%;
-  padding:16px;
-  margin-top:20px;
-  background:#e50914;
-  border:none;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:4px;
-  font-size:16px;
-}
+body{font-family:'Roboto',sans-serif;background:#000;min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;}
+.bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;transition:opacity 1.5s ease;}
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.65);z-index:1;}
+.logo{position:absolute;top:5px;left:5px;width:180px;z-index:3;}
+.form-wrapper{position:relative;z-index:2;background:rgba(0,0,0,.0%);backdrop-filter:blur(12px);padding:60px 68px 40px;border-radius:8px;width:100%;max-width:420px;animation:fadeIn 1s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h2{color:#fff;text-align:center;margin-bottom:28px;font-size:28px;}
+.form-control{position:relative;margin-bottom:20px;}
+.form-control input{width:100%;height:56px;background:#333;border:none;border-radius:4px;color:#fff;padding:0 50px 0 50px;font-size:16px;}
+.form-control input:focus{background:#444;outline:none;}
+.form-control i.left-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#aaa;z-index:2;}
+.form-control label{position:absolute;left:50px;top:50%;transform:translateY(-50%);color:#aaa;transition:.2s;pointer-events:none;font-size:16px;}
+.form-control input:focus ~ label,.form-control input:not(:placeholder-shown) ~ label{top:12px;font-size:12px;color:#ccc;}
+.toggle-pass{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:18px;z-index:3;transition:.2s;}
+.toggle-pass:hover{color:#fff;transform:translateY(-50%) scale(1.1);}
+button{width:100%;padding:16px;margin-top:20px;background:#e50914;border:none;color:#fff;font-weight:bold;cursor:pointer;border-radius:4px;font-size:16px;}
 button:hover{background:#f6121d}
 button:disabled{opacity:.7;cursor:not-allowed}
-.error{
-  color:#e50914;
-  margin-bottom:15px;
-  text-align:center;
-  font-size:14px;
-  min-height:20px;
-}
-.toggle-link{
-  color:#fff;
-  text-align:center;
-  display:block;
-  margin-top:20px;
-  cursor:pointer;
-  text-decoration:underline;
-}
+.error{color:#e50914;margin-bottom:15px;text-align:center;font-size:14px;min-height:20px;}
+.toggle-link{color:#fff;text-align:center;display:block;margin-top:20px;cursor:pointer;text-decoration:underline;}
 .toggle-link:hover{color:#b3b3b3}
-#reset-pass{
-  display:none;
-  margin-bottom:10px;
-  background:#333;
-}
+#reset-pass{display:none;margin-bottom:10px;background:#333;}
 .hidden { display: none !important; }
 
-/* Panel de dos botones */
-#quick-panel {
-  text-align: center;
-  padding: 20px 0;
-}
+#quick-panel { text-align: center; padding: 20px 0; }
 #quick-panel h2 { font-size: 26px; margin-bottom: 8px; }
-#quick-panel .email {
-  font-size: 15px;
-  color: #aaa;
-  margin-bottom: 30px;
-  word-break: break-all;
-}
-#quick-panel button {
-  margin: 12px 0;
-  font-size: 17px;
-  padding: 18px;
-}
-#quick-panel .btn-logout {
-  background: transparent;
-  border: 2px solid #666;
-  color: #ccc;
-}
-#quick-panel .btn-logout:hover {
-  background: #333;
-  border-color: #fff;
-  color: #fff;
-}
+#quick-panel .email { font-size: 15px; color: #aaa; margin-bottom: 30px; word-break: break-all; }
+#quick-panel button { margin: 12px 0; font-size: 17px; padding: 18px; }
+#quick-panel .btn-logout { background: transparent; border: 2px solid #666; color: #ccc; }
+#quick-panel .btn-logout:hover { background: #333; border-color: #fff; color: #fff; }
 </style>
 </head>
 <body>
@@ -200,7 +58,7 @@ button:disabled{opacity:.7;cursor:not-allowed}
 <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dK3-XAKrEia-lWmiUqAYRfFQ1lR9eJX6ZZH8e_vHf576qf9GJjIWBW9Jg5LsilXX7WO2MOEkg5gzc4pESziaPeMJ9ws9mwtCDdp3p_17D0e0Uop_ZxavwwJeNLBvoyZJ0cxTKQpjzrJIR6LjJslB24tj-77AYrRCacQ3F2S2VPoXpPzPhM1zndxyd1Rg/s3307/B64D5386-DCA4-410B-A0A6-6ACB19D0A06F.png">
 
 <div class="form-wrapper">
-  <!-- PANEL DE DOS BOTONES (solo después de login/registro) -->
+  <!-- PANEL DE DOS BOTONES -->
   <div id="quick-panel" class="hidden">
     <h2>Bienvenido de nuevo</h2>
     <p class="email">Iniciarás sesión con:</p>
@@ -311,7 +169,6 @@ function clearCredentials() {
     passwordInput.value = "";
 }
 
-// ==================== MOSTRAR PANEL CORRECTO ====================
 function checkSavedCredentials() {
     const savedEmail = localStorage.getItem("email");
     const savedPass = localStorage.getItem("password");
@@ -326,7 +183,7 @@ function checkSavedCredentials() {
     }
 }
 
-// ==================== REDIRECCIÓN A TU WEB ====================
+// ==================== REDIRECCIÓN ====================
 function redirectToMain(email, password) {
     let redirectUrl = "https://www.lzplayhd.xyz";
     const urlParams = new URLSearchParams(window.location.search);
@@ -339,7 +196,7 @@ function redirectToMain(email, password) {
     window.location.href = redirectUrl;
 }
 
-// ==================== AUTO LOGIN (botón del panel rápido) ====================
+// ==================== AUTO LOGIN ====================
 async function autoLogin() {
     const email = localStorage.getItem("email");
     const password = localStorage.getItem("password");
@@ -361,7 +218,7 @@ function logout() {
     checkSavedCredentials();
 }
 
-// ==================== TOGGLE CONTRASEÑA ====================
+// ==================== TOGGLE PASSWORD ====================
 togglePass.addEventListener("click", () => {
     if (passwordInput.type === "password") {
         passwordInput.type = "text";
@@ -372,7 +229,7 @@ togglePass.addEventListener("click", () => {
     }
 });
 
-// ==================== RESTABLECER CONTRASEÑA ====================
+// ==================== RESET PASSWORD ====================
 resetBtn.addEventListener("click", async () => {
     const email = emailInput.value.trim();
     if (!email) {
@@ -389,7 +246,7 @@ resetBtn.addEventListener("click", async () => {
     }
 });
 
-// ==================== TOGGLE LOGIN / REGISTRO ====================
+// ==================== TOGGLE LOGIN/REGISTRO ====================
 toggle.addEventListener("click", () => {
     isLogin = !isLogin;
     title.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
@@ -397,7 +254,7 @@ toggle.addEventListener("click", () => {
     toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
 });
 
-// ==================== SUBMIT (LOGIN O REGISTRO) ====================
+// ==================== SUBMIT ====================
 form.addEventListener("submit", async e => {
     e.preventDefault();
     errorBox.textContent = "";
@@ -416,7 +273,7 @@ form.addEventListener("submit", async e => {
         }
 
         saveCredentials(email, password);
-        redirectToMain(email, password);   // ← Redirección correcta
+        redirectToMain(email, password);
 
     } catch (err) {
         let message = "Error inesperado, intenta nuevamente";
@@ -450,6 +307,10 @@ window.onload = () => {
     loadImages();
     checkSavedCredentials();
 };
+
+// ==================== EXPONER FUNCIONES AL GLOBAL (IMPORTANTE) ====================
+window.autoLogin = autoLogin;
+window.logout = logout;
 </script>
 </body>
 </html>
