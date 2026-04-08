@@ -12,8 +12,8 @@
 <link rel="shortcut icon" href="img/favicon.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<!-- ====================== PWA CORREGIDO ====================== -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22LzPlay%21%22%2C%22short_name%22%3A%22LzPlay%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23e50914%22%2C%22description%22%3A%22LzPlay%20-%20Streaming%20de%20pel%C3%ADculas%2C%20series%20y%20episodios%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fblogger.googleusercontent.com%2Fimg%2Fb%2FR29vZ2xl%2FAVVXsEhQRGlFxe3v45gb--Z63FxVPZT1rXWxoR4MkszhJKMC3TIZz6Vq4FJbFifEH6e1wKWb3I1FG7ldeMpQkQGg42bZcWvoxTtP3vYYutoTPhH6dt6QYPnGcHBCy6slwDebHLlwxRGcuI6HkxkoJIwyLMWbqnccAb8t-wBHSNvdCBva4Lblq8V96nPUiBOAdd3L%2Fs1290%2FImagen%2520de%2520WhatsApp%25202025-08-27%2520a%2520las%252011.30.04_0601b9e6.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%2C%22purpose%22%3A%22any%22%7D%5D%7D">
+<!-- ====================== PWA - MANIFEST CORREGIDO ====================== -->
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22LzPlay%21%22%2C%22short_name%22%3A%22LzPlay%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23e50914%22%2C%22description%22%3A%22LzPlay%21%20es%20una%20aplicaci%C3%B3n%20de%20entretenimiento%20gratuita%20donde%20puedes%20disfrutar%20pel%C3%ADculas%20y%20series%20sin%20suscripciones%2C%20sin%20pagos%20y%20sin%20anuncios%2C%20todo%20de%20forma%20r%C3%A1pida%20y%20sencilla%20en%20un%20solo%20lugar.%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fblogger.googleusercontent.com%2Fimg%2Fb%2FR29vZ2xl%2FAVVXsEhQRGlFxe3v45gb--Z63FxVPZT1rXWxoR4MkszhJKMC3TIZz6Vq4FJbFifEH6e1wKWb3I1FG7ldeMpQkQGg42bZcWvoxTtP3vYYutoTPhH6dt6QYPnGcHBCy6slwDebHLlwxRGcuI6HkxkoJIwyLMWbqnccAb8t-wBHSNvdCBva4Lblq8V96nPUiBOAdd3L%2Fs1290%2FImagen%2520de%2520WhatsApp%25202025-08-27%2520a%2520las%252011.30.04_0601b9e6.jpg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%2C%22purpose%22%3A%22any%22%7D%5D%2C%22id%22%3A%22LzPlay%21%22%2C%22scope%22%3A%22.%22%2C%22lang%22%3A%22es%22%2C%22categories%22%3A%5B%22entertainment%22%5D%7D">
 
 <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQRGlFxe3v45gb--Z63FxVPZT1rXWxoR4MkszhJKMC3TIZz6Vq4FJbFifEH6e1wKWb3I1FG7ldeMpQkQGg42bZcWvoxTtP3vYYutoTPhH6dt6QYPnGcHBCy6slwDebHLlwxRGcuI6HkxkoJIwyLMWbqnccAb8t-wBHSNvdCBva4Lblq8V96nPUiBOAdd3L/s1290/Imagen%20de%20WhatsApp%202025-08-27%20a%20las%2011.30.04_0601b9e6.jpg">
 
@@ -71,25 +71,25 @@ button:disabled{opacity:.7;cursor:not-allowed}
     <div id="error-msg" class="error"></div>
     <button id="reset-pass">Restablecer contraseña</button>
     <form id="auth-form">
-      <div class="form-control">
-        <i class="fas fa-envelope left-icon"></i>
-        <input type="email" id="email" required placeholder=" ">
-        <label>Correo electrónico</label>
-      </div>
-      <div class="form-control">
-        <i class="fas fa-lock left-icon"></i>
-        <input type="password" id="password" required placeholder=" ">
-        <label>Contraseña</label>
-        <i class="fas fa-eye toggle-pass" id="togglePass"></i>
-      </div>
-      <button id="submit-btn">Iniciar sesión</button>
+        <div class="form-control">
+            <i class="fas fa-envelope left-icon"></i>
+            <input type="email" id="email" required placeholder=" ">
+            <label>Correo electrónico</label>
+        </div>
+        <div class="form-control">
+            <i class="fas fa-lock left-icon"></i>
+            <input type="password" id="password" required placeholder=" ">
+            <label>Contraseña</label>
+            <i class="fas fa-eye toggle-pass" id="togglePass"></i>
+        </div>
+        <button id="submit-btn">Iniciar sesión</button>
     </form>
     <a id="toggle-link" class="toggle-link">¿Nuevo en LzPlay? Regístrate</a>
   </div>
 </div>
 
 <script type="module">
-// ==================== TMDB Background ====================
+/* ==================== TMDB Background ==================== */
 const TMDB_API_KEY = "38e497c6c1a043d1341416e80915669f";
 const IMG = "https://image.tmdb.org/t/p/original";
 let images = [], index = 0, active = 1;
@@ -124,7 +124,7 @@ function startRotation() {
     }, 5000);
 }
 
-// ==================== FIREBASE ====================
+/* ==================== FIREBASE ==================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
@@ -137,7 +137,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// ==================== ELEMENTOS ====================
+/* ==================== ELEMENTOS Y FUNCIONES (sin cambios) ==================== */
 const normalForm = document.getElementById("normal-form");
 const quickPanel = document.getElementById("quick-panel");
 const savedEmailDisplay = document.getElementById("saved-email-display");
@@ -152,7 +152,6 @@ const togglePass = document.getElementById("togglePass");
 const resetBtn = document.getElementById("reset-pass");
 let isLogin = true;
 
-// ==================== LOCALSTORAGE ====================
 function saveCredentials(email, password) {
     localStorage.setItem("email", email);
     localStorage.setItem("password", password);
@@ -175,8 +174,6 @@ function checkSavedCredentials() {
         quickPanel.classList.add("hidden");
     }
 }
-
-// ==================== REDIRECCIÓN ====================
 function redirectToMain(email, password) {
     let redirectUrl = "https://www.lzplayhd.xyz";
     const urlParams = new URLSearchParams(window.location.search);
@@ -186,8 +183,6 @@ function redirectToMain(email, password) {
     redirectUrl += `${separator}autoLogin=1&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(password)}`;
     window.location.href = redirectUrl;
 }
-
-// ==================== AUTO LOGIN ====================
 async function autoLogin() {
     const email = localStorage.getItem("email");
     const password = localStorage.getItem("password");
@@ -201,14 +196,12 @@ async function autoLogin() {
         checkSavedCredentials();
     }
 }
-
-// ==================== CERRAR SESIÓN ====================
 function logout() {
     clearCredentials();
     checkSavedCredentials();
 }
 
-// ==================== TOGGLE PASSWORD ====================
+/* Resto de listeners (toggle password, reset, toggle login, submit) */
 togglePass.addEventListener("click", () => {
     if (passwordInput.type === "password") {
         passwordInput.type = "text";
@@ -218,14 +211,9 @@ togglePass.addEventListener("click", () => {
         togglePass.classList.replace("fa-eye-slash", "fa-eye");
     }
 });
-
-// ==================== RESET PASSWORD ====================
 resetBtn.addEventListener("click", async () => {
     const email = emailInput.value.trim();
-    if (!email) {
-        errorBox.textContent = "Ingresa tu correo para restablecer la contraseña";
-        return;
-    }
+    if (!email) return errorBox.textContent = "Ingresa tu correo para restablecer la contraseña";
     try {
         await sendPasswordResetEmail(auth, email);
         errorBox.style.color = "#4CAF50";
@@ -235,16 +223,12 @@ resetBtn.addEventListener("click", async () => {
         errorBox.textContent = "Error al enviar el correo";
     }
 });
-
-// ==================== TOGGLE LOGIN/REGISTRO ====================
 toggle.addEventListener("click", () => {
     isLogin = !isLogin;
     title.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
     btn.textContent = isLogin ? "Iniciar sesión" : "Crear cuenta";
     toggle.textContent = isLogin ? "¿Nuevo en LzPlay? Regístrate" : "¿Ya tienes cuenta? Inicia sesión";
 });
-
-// ==================== SUBMIT ====================
 form.addEventListener("submit", async e => {
     e.preventDefault();
     errorBox.textContent = "";
@@ -277,23 +261,13 @@ form.addEventListener("submit", async e => {
     btn.disabled = false;
 });
 
-// ==================== INICIO ====================
 window.onload = () => {
     loadImages();
     checkSavedCredentials();
 };
 
-// ==================== EXPONER FUNCIONES ====================
 window.autoLogin = autoLogin;
 window.logout = logout;
-
-// ==================== SERVICE WORKER (para pasar PWABuilder) ====================
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
-        self.addEventListener('install', () => self.skipWaiting());
-        self.addEventListener('activate', () => self.clients.claim());
-    `)).then(() => console.log('Service Worker registrado'));
-}
 </script>
 </body>
 </html>
